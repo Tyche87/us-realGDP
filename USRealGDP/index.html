@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=utf-8 />
+    <title>US Metropolitan Economies</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    
+    <script src='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.js'></script>
+    <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js'></script>
+    <script src='https://code.jquery.com/jquery-1.12.0.min.js'></script>
+    <script src='https://npmcdn.com/simple-statistics@2.0.0/dist/simple-statistics.min.js'></script>
+
+    <link href='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.css' rel='stylesheet' />
+    <link href="https://fonts.googleapis.com/css?family=Scope+One" rel="stylesheet">
+
+    <style>
+        body {
+            margin:0;
+            padding:0;    
+            font-family: 'Scope One', serif;    
+        }
+
+
+        #side-panel {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 33%;
+            background-color: #d1d1d1;
+            
+            overflow-y: scroll;
+            box-shadow:  0 0 15px rgba(0,0,0,0.2);
+        }
+        
+        h1{
+            padding: 8px 25px 8px 15px;
+            margin: 0;
+            background: orange;
+            color: whitesmoke;
+            font-weight: 400;
+            font-size: 1.5em;
+            text-align: left;
+            box-shadow:  0 0 15px rgba(0,0,0,0.2);
+        }
+        h2 {
+            margin: 10;
+            padding: 8px 25px 8px 15px;
+            color: #3d3d3d;
+            font-weight: 500;
+            font-size: 1.1em;
+            text-align: left;
+        }
+        #side-panel p {
+            margin: 20px 20px 4px; 
+            padding: 0 25px 0 15px;
+            color: #3d3d3d;
+            text-align: justify;
+            font-size: 1em;
+            clear: both
+        }
+        #side-panel p:after {
+            content: '';
+            display: block;
+            
+            
+        }
+        #side-panel img {
+            position: absolute;
+            margin: 80% -10%;
+            
+
+        }
+        #map {
+            position:absolute;
+            top:0;
+            bottom:0;
+            right: 0;
+            width: 67%;
+        }
+
+        #ui-slider {
+            position: absolute;
+            top: 235px;
+            right: 30px;
+            width: 200px;
+            padding: 8px 15px 4px;
+            background: rgba(90, 90, 90, 0.30);
+            border: 2px solid #d3d3d3;
+            border-radius: ;
+            color: whitesmoke;
+            box-shadow:  0 0 15px rgba(0,0,0,0.2);
+        }
+        .slider {
+            width: 100%;
+            
+        }
+
+        #grade {
+            position: absolute;
+            left: ;
+            bottom: 160px;
+            padding: 6px 15px 8px;
+            background: rgba(90, 90, 90, 0.30);
+            border: 2px solid #d3d3d3;
+            border-radius: 7px;
+            box-shadow:  0 0 15px rgba(0,0,0,0.2);
+                
+        }
+        #grade span {
+            font-size: 1.3em;
+            font-weight: 500;
+                
+        }
+        #ui-data{
+            position: absolute;
+            top: 150px;
+            left: 11px;
+            width: 210px;
+            padding: 5px 200px 15px 20px;
+            background: rgba(90, 90, 90, 0.30);
+            border: 2px solid #d3d3d3;
+            border-radius: ;
+            color: orange;
+            box-shadow:  0 0 15px rgba(0,0,0,0.2);
+            
+        }
+         #year{
+            margin-top:0px;
+            padding:120px 200px 10px 50px;
+            color: whitesmoke;
+            font-weight: 200;
+            font-size: 1.5em;
+            text-align: left;
+            box-shadow:  0 0 15px rgba(0,0,0,0.2);
+        }
+        #legend {
+            position: absolute;
+            right: 0;
+            bottom: 30px;
+            padding: 6px 15px 8px;
+            background: rgba(90, 90, 90, 0.30);
+            border: 2px solid #d3d3d3;
+            border-radius:;
+            box-shadow:  0 0 15px rgba(0,0,0,0.2);
+            font-size: .8em;
+        }
+        #info {
+            position: absolute;
+            background: whitesmoke;
+            display: none;
+            padding: 6px 15px 8px;
+            border: 2px solid #d3d3d3;
+            border-radius: 7px;
+            box-shadow:  0 0 15px rgba(0,0,0,0.2);
+        }
+        #info p{
+            margin: 3px 0 4px;
+        }
+    
+            
+        }
+        .data{
+            color: #8C029A;
+        }
+        
+        .ent{
+            color: #8BA838; 
+        }
+
+    </style>
+</head>
+<body>
+    
+    
+<div id='side-panel'>
+    <h1>US Economies 2001 - 2013</h1>
+    <h2>What makes up local economies across the country?</h2>
+    <p></p>
+    <div id="year">Year: <span>2001</span></div>
+    <p><img src="" alt="legend"></p>
+    <h2><br>About this map:</h2>
+    <p>Compare industries' contribution to local GDP across the US using the data selector. Use the date slider to see positive or negative growth over the years 2001 to 2013. All GDP data is sourced from the Bureau of Economic Analysis: <a href="https://www.bea.gov">See or Browse Data</a></p>
+    <p></p>
+    
+    <div id="ui-slider">
+        <input type="range" min="2001" max="2013" value="2001" step="1" class="slider"> 
+    </div>
+    <div id="info">
+        <p>Metro: <span></span></p>
+        <p class='sectorData'>agriculture <span></span>: <span></span></p>
+        <p class='ent'>entertainment <span></span>: <span></span></p>
+        <p class='con'>entertainment <span></span>: <span></span></p>
+        <p class='soc'>entertainment <span></span>: <span></span></p>
+        <p class='ent'>entertainment <span></span>: <span></span></p>
+        <p class='ent'>entertainment <span></span>: <span></span></p>
+        <p class='ent'>entertainment <span></span>: <span></span></p>
+        <p class='ent'>entertainment <span></span>: <span></span></p>
+        <p class='ent'>entertainment <span></span>: <span></span></p>
+        <p class='ent'>entertainment <span></span>: <span></span></p>
+        <p class='ent'>entertainment <span></span>: <span></span></p>
+        <p class='ent'>entertainment <span></span>: <span></span></p>
+        <p class='ent'>entertainment <span></span>: <span></span></p>
+        
+    </div>
+    
+    <div id ='ui-data'>
+        <label> Choose an Industry Sector:</label>
+        <select id = "sector"> 
+            <option value="AG_2001" selected>Agriculture, forestry, fishing, and hunting</option>
+            <option value="ENT_2001" >Arts, entertainment, recreation, accommodation, and food services</option>
+            <option value="CON_2001" >Construction</option>
+            <option value="SOC_2001" >Educational services, health care, and social assistance</option>
+            <option value="FIN_2001" >Finance, insurance, real estate, rental, and leasing</option>
+            <option value="INF_2001" >Information</option>
+            <option value="MAN_2001" >Manufacturing</option>
+            <option value="MIN_2001" >Mining</option>
+            <option value="BUS_2001" >Professional and business services</option>
+            <option value="RET_2001" >Retail</option>
+            <option value="TRA_2001" >Transportation and warehousing</option>
+            <option value="UTL_2001" >Utilities</option>
+            <option value="WHO_2001" >Wholesale Trade</option>
+            <option value="GOV_2001" >Government</option>
+            <option value="NAT_2001" >Natural Resources and Mining</option>
+            <option value="TOT_2001" >Total Annual Local Contribution to Real GDP</option>
+
+        </select>
+    </div>
+    
+    
+    </div>
+    <div id='map'></div>
+        <div id="legend">
+        <h3>Real Contribution to Local GDP</h3>
+        <svg class="legend" width="200" height="200"></svg>
+    </div>
+
+    
+
+    <script>
+        L.mapbox.accessToken = 'pk.eyJ1Ijoicmdkb25vaHVlIiwiYSI6Im5Ua3F4UzgifQ.PClcVzU5OUj17kuxqsY_Dg';
+
+        var map = L.mapbox.map('map', 'mapbox.light', {
+            center: [39.82, -90.58],
+            zoom: 4,
+            minZoom: 3,
+            maxZoom: 9,
+           
+        });
+        
+        
+        var currentYear = 2001
+
+        
+        var metroCentroids = omnivore.csv('realGDP_metro_2001-2013a.csv')
+            .on('ready',function(e) {
+                drawMap(e.target.toGeoJSON())
+            })
+            .on('error', function(e) {
+                console.log(e.error[0].message)
+            });
+        
+        //console.log(metroCentroids)    
+        
+                
+        var data,
+            sectorData;
+
+        function drawMap(gdpData){
+            
+         data = L.geoJson(gdpData, {
+            pointToLayer: function(feature, layer){
+                return L.circleMarker(layer, {
+                    color: '#8C029A',
+                    opacity: .8,
+                    weight: 1,
+                    fillOpacity: 0,
+                    radius: calcRadius(Number(feature.properties.AG_2001))
+                });
+            }
+        }).addTo(map);        
+        
+           
+        updateSymbols(2001)
+        sequenceUI()
+        
+            
+            }
+        
+        function updateMapData(){
+            $('select[id="sector"]').change(function(){
+                sectorData = $(this).val();
+                //console.log(sectorData)
+                return sectorData
+            })
+            
+        }        
+        
+        
+        function updateSymbols(currentYear) {
+            
+            var allRadii = [],
+                radius;
+            
+            updateMapData()
+            
+            data.eachLayer(function(layer) {
+                //radius = (calcRadius(Number(layer.feature.properties['AG_'+currentYear])))
+                radius = (calcRadius(Number(layer.feature.properties[sectorData])))
+                layer.setRadius(radius)
+                allRadii.push(radius)
+            });
+            
+//            ent.eachLayer(function(layer) {
+//                radius = (calcRadius(Number(layer.feature.properties['sector'+currentYear])))
+//                layer.setRadius(radius)
+//                allRadii.push(radius)
+//            });
+            
+            drawLegend(allRadii);
+            infoWindow(currentYear);        
+        }
+        
+       function calcRadius(val) {
+            
+            var radius = Math.sqrt(val/Math.PI);
+            return radius * .4;
+        }
+        
+        function sequenceUI() {
+            
+            //var output = $('.year span');
+            
+            $('.slider')
+                .on('input change', function() {
+                    var currentYear = $(this).val();
+                    updateSymbols(currentYear);
+                    $('#year span').html(currentYear);
+                });
+            
+        }
+        
+
+        
+        function drawLegend(allRadii){
+            var legend =$('.legend')
+            var circles = {
+                max: ss.max(allRadii),
+                median: ss.median(allRadii),
+                min: ss.min(allRadii),
+                
+            }
+            
+           // console.log(circles)
+            
+            var svgCircle = '';
+            
+            var reverseCalc = function(radius) {
+                
+                return Math.round(Math.pow(radius/.6, 2) * Math.PI)
+                
+            }
+                
+            for (var circle in circles) {
+                var radiusValue = circles[circle];
+                
+                var actualValue = reverseCalc(radiusValue);
+                
+                svgCircle += '<circle cx="50%" cy="' + (radiusValue -180) * -1 + '" r="' + radiusValue + '" stroke = "#DEDEDE" stroke-width="2" fill="rgba(140, 2, 154, 0.30)" />';
+                
+                svgCircle += '<text x="'+ 85 +'" y = "'+ (radiusValue -160) * -1 + '" fill="#222222">'+ actualValue +'</text>'
+            }
+            
+            legend.html(svgCircle);
+        }
+        
+        function infoWindow(currentYear) {
+            var info = $('#info');
+            
+            data.on('mouseover', function(e){
+                
+                info.show()
+                
+                var props = e.layer.feature.properties;
+                $('#info span').text(props.metro);
+                $('.sectorData span:first-child').text('(year'+ currentYear +')');
+                //$('.boys span:first-child').text('(year ' + currentYear +')');
+                
+                $(".sectorData span:last-child").text(props['AG_'+String(currentYear)].toLocaleString());
+                //$(".boys span:last-child").text(props['ENT_'+String(currentYear)].toLocaleString());
+                
+                e.layer.setStyle({ fillOpacity: .6 });
+                
+            })
+            
+            data.on('mouseout', function(e){
+               
+                info.hide()
+                e.layer.setStyle({ fillOpacity: 0});
+                
+            });
+            
+            $(document).mousemove(function(e) {
+                info.css({"left": e.pageX + 6, "top": e.pageY - info.height() - 15});
+                
+                if(info.offset().top < 4) {
+                    info.css({"top": e.pageY + 15} )
+                }
+                
+                if(info.offset().left + info.width() >= $(window).width() - 40) {
+                   info.css({ "left": e.pageX - info.width() - 15 })
+                   };
+            });
+        }
+
+    </script>
+</body>
+</html>
