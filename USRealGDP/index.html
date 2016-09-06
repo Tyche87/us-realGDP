@@ -164,8 +164,8 @@
             color: #8C029A;
         }
         
-        .ent{
-            color: #8BA838; 
+        .total{
+            color: #FF0000; 
         }
 
     </style>
@@ -207,22 +207,22 @@
     <div id ='ui-data'>
         <label> Choose an Industry Sector:</label>
         <select id = "sector"> 
-            <option value="AG_2001" selected>Agriculture, forestry, fishing, and hunting</option>
-            <option value="ENT_2001" >Arts, entertainment, recreation, accommodation, and food services</option>
-            <option value="CON_2001" >Construction</option>
-            <option value="SOC_2001" >Educational services, health care, and social assistance</option>
-            <option value="FIN_2001" >Finance, insurance, real estate, rental, and leasing</option>
-            <option value="INF_2001" >Information</option>
-            <option value="MAN_2001" >Manufacturing</option>
-            <option value="MIN_2001" >Mining</option>
-            <option value="BUS_2001" >Professional and business services</option>
-            <option value="RET_2001" >Retail</option>
-            <option value="TRA_2001" >Transportation and warehousing</option>
-            <option value="UTL_2001" >Utilities</option>
-            <option value="WHO_2001" >Wholesale Trade</option>
-            <option value="GOV_2001" >Government</option>
-            <option value="NAT_2001" >Natural Resources and Mining</option>
-            <option value="TOT_2001" >Total Annual Local Contribution to Real GDP</option>
+            <option value="AG_" selected>Agriculture, forestry, fishing, and hunting</option>
+            <option value="ENT_" >Arts, entertainment, recreation, accommodation, and food services</option>
+            <option value="CON_" >Construction</option>
+            <option value="SOC_" >Educational services, health care, and social assistance</option>
+            <option value="FIN_" >Finance, insurance, real estate, rental, and leasing</option>
+            <option value="INF_" >Information</option>
+            <option value="MAN_" >Manufacturing</option>
+            <option value="MIN_" >Mining</option>
+            <option value="BUS_" >Professional and business services</option>
+            <option value="RET_" >Retail</option>
+            <option value="TRA_" >Transportation and warehousing</option>
+            <option value="UTL_" >Utilities</option>
+            <option value="WHO_" >Wholesale Trade</option>
+            <option value="GOV_" >Government</option>
+            <option value="NAT_" >Natural Resources and Mining</option>
+            <option value="TOT_" >Total Annual Local Contribution to Real GDP</option>
 
         </select>
     </div>
@@ -277,9 +277,24 @@
                     fillOpacity: 0,
                     radius: calcRadius(Number(feature.properties.AG_2001))
                 });
+                
             }
-        }).addTo(map);        
-        
+             
+        }).addTo(map);
+            
+//         total = L.geoJson(gdpData, {
+//            pointToLayer: function(feature, layer){
+//                return L.circleMarker(layer, {
+//                    color: '#FF0000',
+//                    opacity: .8,
+//                    weight: 1,
+//                    fillOpacity: 0,
+//                    radius: calcRadius(Number(feature.properties.TOT_2001))
+//                });
+//                
+//            }
+//             
+//        }).addTo(map);            
            
         updateSymbols(2001)
         sequenceUI()
@@ -305,14 +320,13 @@
             updateMapData()
             
             data.eachLayer(function(layer) {
-                //radius = (calcRadius(Number(layer.feature.properties['AG_'+currentYear])))
-                radius = (calcRadius(Number(layer.feature.properties[sectorData])))
+                radius = (calcRadius(Number(layer.feature.properties[sectorData +currentYear])))
                 layer.setRadius(radius)
                 allRadii.push(radius)
             });
             
-//            ent.eachLayer(function(layer) {
-//                radius = (calcRadius(Number(layer.feature.properties['sector'+currentYear])))
+//            total.eachLayer(function(layer) {
+//                radius = (calcRadius(Number(layer.feature.properties['TOT_'+currentYear])))
 //                layer.setRadius(radius)
 //                allRadii.push(radius)
 //            });
