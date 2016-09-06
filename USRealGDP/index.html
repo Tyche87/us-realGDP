@@ -81,7 +81,7 @@
 
         #ui-slider {
             position: absolute;
-            top: 235px;
+            top: 230px;
             right: 30px;
             width: 200px;
             padding: 8px 15px 4px;
@@ -114,7 +114,7 @@
         }
         #ui-data{
             position: absolute;
-            top: 150px;
+            top: 140px;
             left: 11px;
             width: 210px;
             padding: 5px 200px 15px 20px;
@@ -128,7 +128,7 @@
          #year{
             margin-top:0px;
             padding:120px 200px 10px 50px;
-            color: whitesmoke;
+            color: orange;
             font-weight: 200;
             font-size: 1.5em;
             text-align: left;
@@ -147,15 +147,24 @@
         }
         #info {
             position: absolute;
+            left: 33%;
+            bottom: 30px;
+            padding: 6px 15px 8px;
+            background: rgba(90, 90, 90, 0.30);
+            border: 2px solid #d3d3d3;
+            border-radius:;
+            box-shadow:  0 0 15px rgba(0,0,0,0.2);
+            font-size: .8em;
+/*            position: absolute;
             background: whitesmoke;
-            display: none;
+            
             padding: 6px 15px 8px;
             border: 2px solid #d3d3d3;
             border-radius: 7px;
-            box-shadow:  0 0 15px rgba(0,0,0,0.2);
+            box-shadow:  0 0 15px rgba(0,0,0,0.2);*/
         }
         #info p{
-            margin: 3px 0 4px;
+            margin: 3px 0px 4px;
         }
     
             
@@ -185,23 +194,7 @@
     
     <div id="ui-slider">
         <input type="range" min="2001" max="2013" value="2001" step="1" class="slider"> 
-    </div>
-    <div id="info">
-        <p>Metro: <span></span></p>
-        <p class='sectorData'>agriculture <span></span>: <span></span></p>
-        <p class='ent'>entertainment <span></span>: <span></span></p>
-        <p class='con'>entertainment <span></span>: <span></span></p>
-        <p class='soc'>entertainment <span></span>: <span></span></p>
-        <p class='ent'>entertainment <span></span>: <span></span></p>
-        <p class='ent'>entertainment <span></span>: <span></span></p>
-        <p class='ent'>entertainment <span></span>: <span></span></p>
-        <p class='ent'>entertainment <span></span>: <span></span></p>
-        <p class='ent'>entertainment <span></span>: <span></span></p>
-        <p class='ent'>entertainment <span></span>: <span></span></p>
-        <p class='ent'>entertainment <span></span>: <span></span></p>
-        <p class='ent'>entertainment <span></span>: <span></span></p>
-        <p class='ent'>entertainment <span></span>: <span></span></p>
-        
+        <input type="range" min="" max="" value="2001" step="1" class="slider">
     </div>
     
     <div id ='ui-data'>
@@ -234,6 +227,24 @@
         <h3>Real Contribution to Local GDP</h3>
         <svg class="legend" width="200" height="200"></svg>
     </div>
+    
+    <div id="info">
+        <p><span></span></p>
+       <p class='sectorData'>Percent local GDP: <span></span></p>
+<!--        <p class='ent'>Entertainment: <span></span></p>
+        <p class='con'>Construction: <span></span></p>
+        <p class='soc'>entertainment: <span></span></p>
+        <p class='ent'>entertainment: <span></span></p>
+        <p class='ent'>entertainment: <span></span></p>
+        <p class='ent'>entertainment: <span></span></p>
+        <p class='ent'>entertainment: <span></span></p>
+        <p class='ent'>entertainment: <span></span></p>
+        <p class='ent'>entertainment: <span></span></p>
+        <p class='ent'>entertainment: <span></span></p>
+        <p class='ent'>entertainment: <span></span></p>
+        <p class='ent'>entertainment: <span></span></p>-->
+        
+    </div>
 
     
 
@@ -264,7 +275,8 @@
         
                 
         var data,
-            sectorData;
+            sectorData,
+            percent;
 
         function drawMap(gdpData){
             
@@ -275,7 +287,7 @@
                     opacity: .8,
                     weight: 1,
                     fillOpacity: 0,
-                    radius: calcRadius(Number(feature.properties.AG_2001))
+                  //  radius: calcRadius(Number(feature.properties.AG_2001))
                 });
                 
             }
@@ -302,6 +314,8 @@
             
             }
         
+        drawMap()
+        
         function updateMapData(){
             $('select[id="sector"]').change(function(){
                 sectorData = $(this).val();
@@ -320,9 +334,12 @@
             updateMapData()
             
             data.eachLayer(function(layer) {
-                radius = (calcRadius(Number(layer.feature.properties[sectorData +currentYear])))
+                var props = layer.feature.properties
+                percent = (Number(props[sectorData +currentYear]/props['TOT_'+currentYear])*100)
+                radius = calcRadius(percent)
                 layer.setRadius(radius)
                 allRadii.push(radius)
+                //console.log(percent)
             });
             
 //            total.eachLayer(function(layer) {
@@ -331,14 +348,14 @@
 //                allRadii.push(radius)
 //            });
             
-            drawLegend(allRadii);
+            //drawLegend(allRadii);
             infoWindow(currentYear);        
         }
         
        function calcRadius(val) {
             
             var radius = Math.sqrt(val/Math.PI);
-            return radius * .4;
+            return radius * 10;
         }
         
         function sequenceUI() {
@@ -356,37 +373,37 @@
         
 
         
-        function drawLegend(allRadii){
-            var legend =$('.legend')
-            var circles = {
-                max: ss.max(allRadii),
-                median: ss.median(allRadii),
-                min: ss.min(allRadii),
-                
-            }
-            
-           // console.log(circles)
-            
-            var svgCircle = '';
-            
-            var reverseCalc = function(radius) {
-                
-                return Math.round(Math.pow(radius/.6, 2) * Math.PI)
-                
-            }
-                
-            for (var circle in circles) {
-                var radiusValue = circles[circle];
-                
-                var actualValue = reverseCalc(radiusValue);
-                
-                svgCircle += '<circle cx="50%" cy="' + (radiusValue -180) * -1 + '" r="' + radiusValue + '" stroke = "#DEDEDE" stroke-width="2" fill="rgba(140, 2, 154, 0.30)" />';
-                
-                svgCircle += '<text x="'+ 85 +'" y = "'+ (radiusValue -160) * -1 + '" fill="#222222">'+ actualValue +'</text>'
-            }
-            
-            legend.html(svgCircle);
-        }
+//        function drawLegend(allRadii){
+//            var legend =$('.legend')
+//            var circles = {
+//                max: ss.max(allRadii),
+//                median: ss.median(allRadii),
+//                min: ss.min(allRadii),
+//                
+//            }
+//            
+//           // console.log(circles)
+//            
+//            var svgCircle = '';
+//            
+//            var reverseCalc = function(radius) {
+//                
+//                return Math.round(Math.pow(radius/.6, 2) * Math.PI)
+//                
+//            }
+//                
+//            for (var circle in circles) {
+//                var radiusValue = circles[circle];
+//                
+//                var actualValue = reverseCalc(radiusValue);
+//                
+//                svgCircle += '<circle cx="50%" cy="' + (radiusValue -180) * -1 + '" r="' + radiusValue + '" stroke = "#DEDEDE" stroke-width="2" fill="rgba(140, 2, 154, 0.30)" />';
+//                
+//                svgCircle += '<text x="'+ 85 +'" y = "'+ (radiusValue -160) * -1 + '" fill="#222222">'+ actualValue +'</text>'
+//            }
+//            
+//            legend.html(svgCircle);
+//        }
         
         function infoWindow(currentYear) {
             var info = $('#info');
@@ -396,12 +413,13 @@
                 info.show()
                 
                 var props = e.layer.feature.properties;
-                $('#info span').text(props.metro);
-                $('.sectorData span:first-child').text('(year'+ currentYear +')');
-                //$('.boys span:first-child').text('(year ' + currentYear +')');
+                $('#info span').text(props.metro+' '+currentYear);
+                $('.sectorData span').text(percent);
+//                $('.sectorData span:first-child').text('(year'+ currentYear +')');
                 
-                $(".sectorData span:last-child").text(props['AG_'+String(currentYear)].toLocaleString());
-                //$(".boys span:last-child").text(props['ENT_'+String(currentYear)].toLocaleString());
+                
+//                $(".sectorData span:last-child").text(props['AG_'+String(currentYear)].toLocaleString());
+//                $(".boys span:last-child").text(props['ENT_'+String(currentYear)].toLocaleString());
                 
                 e.layer.setStyle({ fillOpacity: .6 });
                 
@@ -409,22 +427,22 @@
             
             data.on('mouseout', function(e){
                
-                info.hide()
+                //info.hide()
                 e.layer.setStyle({ fillOpacity: 0});
                 
             });
             
-            $(document).mousemove(function(e) {
-                info.css({"left": e.pageX + 6, "top": e.pageY - info.height() - 15});
-                
-                if(info.offset().top < 4) {
-                    info.css({"top": e.pageY + 15} )
-                }
-                
-                if(info.offset().left + info.width() >= $(window).width() - 40) {
-                   info.css({ "left": e.pageX - info.width() - 15 })
-                   };
-            });
+//            $(document).mousemove(function(e) {
+//                info.css({"left": e.pageX + 6, "top": e.pageY - info.height() - 15});
+//                
+//                if(info.offset().top < 4) {
+//                    info.css({"top": e.pageY + 15} )
+//                }
+//                
+//                if(info.offset().left + info.width() >= $(window).width() - 40) {
+//                   info.css({ "left": e.pageX - info.width() - 15 })
+//                   };
+//            });
         }
 
     </script>
