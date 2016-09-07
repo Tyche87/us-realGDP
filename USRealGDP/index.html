@@ -205,7 +205,7 @@
     
     <div id="ui-slider">
         <input type="range" min="2001" max="2013" value="2001" step="1" class="slider"> 
-        <input type="range" min="2001" max="2013" value="2001" step="1" class="slider">
+
     </div>
     
     <div id ='ui-data'>
@@ -227,7 +227,6 @@
             <option value="GOV_" >Government</option>
             <option value="NAT_" >Natural Resources and Mining</option>
             <option value="TOT_" >Total Annual Local Contribution to Real GDP</option>
-
         </select>
         
         <label> Choose a Metropolitan Area:</label>
@@ -279,9 +278,6 @@
             maxZoom: 9,
            
         });
-        
-        
-        var currentYear = 2001
 
         
         var metroCentroids = omnivore.csv('realGDP_metro_2001-2013a.csv')
@@ -292,75 +288,78 @@
                 console.log(e.error[0].message)
             });
         
-        //console.log(metroCentroids)    
-        
-                
-        var data,
-            sectorData,
-            percent;
+       
+        // global vars         
+        var currentYear = 2001,
+            data,
+            sectorData = 'AG_';
 
         function drawMap(gdpData){
             
-         data = L.geoJson(gdpData, {
-            pointToLayer: function(feature, layer){
-                return L.circleMarker(layer, {
-                    color: '#8C029A',
-                    opacity: .8,
-                    weight: 1,
-                    fillOpacity: 0,
-                  //  radius: calcRadius(Number(feature.properties.AG_2001))
+             data = L.geoJson(gdpData, {
+                pointToLayer: function(feature, layer){
+                    return L.circleMarker(layer, {
+                        color: '#8C029A',
+                        opacity: .8,
+                        weight: 1,
+                        fillOpacity: 0,
+                      //  radius: calcRadius(Number(feature.properties.AG_2001))
+                    });
+
+                }
+
+            }).addTo(map);
+
+    //         total = L.geoJson(gdpData, {
+    //            pointToLayer: function(feature, layer){
+    //                return L.circleMarker(layer, {
+    //                    color: '#FF0000',
+    //                    opacity: .8,
+    //                    weight: 1,
+    //                    fillOpacity: 0,
+    //                    radius: calcRadius(Number(feature.properties.TOT_2001))
+    //                });
+    //                
+    //            }
+    //             
+    //        }).addTo(map);            
+
+            addUiListeners();
+            updateSymbols();
+                    
+            
+        }
+        
+        function addUiListeners(){
+            
+            // listen for changes to the temperal slider
+            $('.slider')
+                .on('input change', function() {
+                    var currentYear = $(this).val();
+                    updateSymbols();
+                    $('#year span').html(currentYear);
                 });
-                
-            }
-             
-        }).addTo(map);
             
-//         total = L.geoJson(gdpData, {
-//            pointToLayer: function(feature, layer){
-//                return L.circleMarker(layer, {
-//                    color: '#FF0000',
-//                    opacity: .8,
-//                    weight: 1,
-//                    fillOpacity: 0,
-//                    radius: calcRadius(Number(feature.properties.TOT_2001))
-//                });
-//                
-//            }
-//             
-//        }).addTo(map);            
-           
-        updateSymbols(2001)
-        sequenceUI()
-        
             
-            }
-        
-        drawMap()
-        
-        function updateMapData(){
+            // listen for changes to the dropdown attribute selector
             $('select[id="sector"]').change(function(){
                 sectorData = $(this).val();
-                //console.log(sectorData)
-                return sectorData
+                updateSymbols();
             })
             
         }        
         
         
-        function updateSymbols(currentYear) {
+        function updateSymbols() {
             
-            var allRadii = [],
-                radius;
-            
-            updateMapData()
+            var allRadii = [];
             
             data.eachLayer(function(layer) {
-                var props = layer.feature.properties
-                percent = (Number(props[sectorData +currentYear]/props['TOT_'+currentYear])*100)
-                radius = calcRadius(percent)
-                layer.setRadius(radius)
-                allRadii.push(radius)
-                //console.log(percent)
+                var props = layer.feature.properties;
+                var percent = Number(props[sectorData + currentYear]/props['TOT_'+currentYear])*100;
+                var radius = calcRadius(percent);
+                layer.setRadius(radius);
+                allRadii.push(radius); 
             });
             
 //            total.eachLayer(function(layer) {
@@ -370,7 +369,7 @@
 //            });
             
             //drawLegend(allRadii);
-            infoWindow(currentYear);        
+            // infoWindow();        
         }
         
        function calcRadius(val) {
@@ -379,20 +378,6 @@
             return radius * 10;
         }
         
-        function sequenceUI() {
-            
-            //var output = $('.year span');
-            
-            $('.slider')
-                .on('input change', function() {
-                    var currentYear = $(this).val();
-                    updateSymbols(currentYear);
-                    $('#year span').html(currentYear);
-                });
-            
-        }
-        
-
         
 //        function drawLegend(allRadii){
 //            var legend =$('.legend')
@@ -426,7 +411,7 @@
 //            legend.html(svgCircle);
 //        }
         
-        function infoWindow(currentYear) {
+        function infoWindow() {
             var info = $('#info');
             
             data.on('mouseover', function(e){
@@ -435,7 +420,7 @@
                 
                 var props = e.layer.feature.properties;
                 $('#info span').text(props.metro+' '+currentYear);
-                $('.sectorData span').text(percent);
+               // $('.sectorData span').text(percent);
 //                $('.sectorData span:first-child').text('(year'+ currentYear +')');
                 
                 
