@@ -119,12 +119,11 @@
         }
         #legend {
             position: absolute;
-            right: 0;
+            right: 10px;
             bottom: 30px;
-            padding: 6px 15px 8px;
+            padding: 0px 15px 0px 15px;
             background: rgba(90, 90, 90, 0.30);
             border: 2px solid #d3d3d3;
-            border-radius:;
             box-shadow:  0 0 15px rgba(0,0,0,0.2);
             font-size: .8em;
         }
@@ -153,7 +152,8 @@
             
         }
         .data{
-            color: #8C029A;
+            color: #FF0000;
+            box-shadow:  0 0 15px rgba(0,0,0,0.2);
         }
         
         .total{
@@ -228,7 +228,7 @@
     <div id='map'></div>
         <div id="legend">
         <h3>Real Contribution to Local GDP</h3>
-        <svg class="legend" width="200" height="200"></svg>
+        <svg class="legend" width="600" height="100"></svg>
     </div>
     
     <div id="info">
@@ -344,7 +344,8 @@
                 var realGDP = Number(props[sectorData + currentYear])
                 var radius = calcRadius(realGDP);
                 layer.setRadius(radius);
-                allRadii.push(radius); 
+                allRadii.push(radius);
+                infoWindow(realGDP);
                 
             });
             
@@ -359,7 +360,6 @@
         
        function calcRadius(val) {
             
-           infoWindow(val);
             var radius = Math.sqrt(val/Math.PI);
             return radius * .6;
             
@@ -438,8 +438,8 @@
 //            });
         }
         
-        
-//        var svg = d3.select("svg"),
+    //D3 bar graph display    
+//        var svg = d3.select("legend"),
 //            margin = {top: 20, right: 20, bottom: 30, left: 40},
 //            width = +svg.attr("width") - margin.left - margin.right,
 //            height = +svg.attr("height") - margin.top - margin.bottom,
