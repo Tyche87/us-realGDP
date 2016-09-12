@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=utf-8 />
+    <title>US Metropolitan Economies</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.2/d3.min.js"></script>
+    <script src='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.js'></script>
+    <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js'></script>
+    <script src='https://code.jquery.com/jquery-1.12.0.min.js'></script>
+    <script src='https://npmcdn.com/simple-statistics@2.0.0/dist/simple-statistics.min.js'></script>
+
+    <link href='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.css' rel='stylesheet'/>
+    <link href="https://fonts.googleapis.com/css?family=Scope+One" rel="stylesheet"/>
+    <style>
+        body {
+            margin:0;
+            padding:0;    
+            font-family: 'Scope One', serif;    
+        }
+
+
+        #side-panel {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 33%;
+            background-color: #d1d1d1;
+            
+            overflow-y: scroll;
+            box-shadow:  0 0 15px rgba(0,0,0,0.2);
+        }
+        
+        h1{
+            padding: 8px 25px 8px 15px;
+            margin: 0;
+            background: orange;
+            color: whitesmoke;
+            font-weight: 400;
+            font-size: 1.5em;
+            text-align: center;
+            box-shadow:  0 0 15px rgba(0,0,0,0.2);
+        }
+        h2 {
+            margin: 10;
+            padding: 8px 25px 8px 15px;
+            color: #3d3d3d;
+            font-weight: 500;
+            font-size: 1.1em;
+            text-align: left;
+        }
+        #side-panel p {
+            margin: 20px 20px 4px; 
+            padding: 0 25px 0 15px;
+            color: #3d3d3d;
+            text-align: justify;
+            font-size: 1em;
+            clear: both
+        }
+        #side-panel p:after {
+            content: '';
+            display: block;
+            
+            
+        }
+        #side-panel img {
+            position: absolute;
+            margin: 80% -10%;
+        }
+        #map {
+            position:absolute;
+            top:0;
+            bottom:0;
+            right: 0;
+            width: 67%;
+        }
+
+        #ui-slider {
+            position: absolute;
+            top: 235px;
+            right: 20px;
+            width: 220px;
+            padding: 8px 15px 4px;
+            background: rgba(90, 90, 90, 0.30);
+            border: 2px solid #d3d3d3;
+            border-radius: ;
+            color: whitesmoke;
+            box-shadow:  0 0 15px rgba(0,0,0,0.2);
+        }
+        .slider {
+            width: 100%;
+            
+        }
+        #filter{
+            width: 100%;
+        }
+
+        #ui-data{
+            position: absolute;
+            top: 150px;
+            left: 11px;
+            width: 220px;
+            padding: 5px 200px 15px 20px;
+            background: rgba(90, 90, 90, 0.30);
+            border: 2px solid #d3d3d3;
+            border-radius: ;
+            color: orange;
+            box-shadow:  0 0 15px rgba(0,0,0,0.2);   
+        }
+
+        #year{
+            padding:130px 200px 10px 80px;
+            color: whitesmoke;
+            font-weight: 200;
+            font-size: 1.3em;
+            text-align: left;
+            box-shadow:  0 0 15px rgba(0,0,0,0.2);
+        }
+        #chart-container {
+            position: absolute;
+            right: 10px;
+            bottom: 20px;
+            padding: 0px 15px 0px 15px;
+            background: rgba(90, 90, 90, 0.30);
+            border: 2px solid #d3d3d3;
+            box-shadow:  0 0 15px rgba(0,0,0,0.2);
+            font-size: 1em;
+            color: #3d3d3d;
+        }
+        #info {
+            position: absolute;
+            left: 3px;
+            top: 3px;
+            padding: 6px 15px 8px;
+            font-size: .8em;
+/*            position: absolute;
+            background: whitesmoke;
+            
+            padding: 6px 15px 8px;
+            border: 2px solid #d3d3d3;
+            border-radius: 7px;
+            box-shadow:  0 0 15px rgba(0,0,0,0.2);*/
+        }
+        #info p{
+            margin: 3px 0px 4px;
+        }
+        
+        .axis {
+          font: 10px sans-serif;
+        }
+
+        .axis-title {
+          text-anchor: end;
+        }
+
+        .axis path,
+        .axis line {
+          fill: none;
+          stroke: #000;
+          shape-rendering: crispEdges;
+        }
+
+        .axis--x path {
+          display: none;
+        }
+
+        .axis--y .tick:not(.tick--one) line {
+          stroke-opacity: .15;
+        }
+
+        .line {
+          fill: none;
+          stroke: steelblue;
+          stroke-width: 1.5px;
+          stroke-linejoin: round;
+          stroke-linecap: round;
+        }
+    
+       
+        
+    </style>
+</head>
+<body>
+    
+<div id='side-panel'>
+    <h1>US Economies 2001 - 2013</h1>
+    <h2>What makes up local economies across the country?</h2>
+    <p></p>
+    <div id="year">Year: <span>2001</span></div>
+    <p></p>
+    <h2><br>About this map:</h2>
+    <p>Compare industries' contribution to local GDP across the US using the data selector. Use the date slider to see positive or negative growth over the years 2001 to 2013. Dollar values are represented in billions, 'chained' to 2009 values for relative comparability. All GDP data is sourced from the Bureau of Economic Analysis: <a href="https://www.bea.gov">See or Browse Data</a></p>
+    <p></p>
+    
+    <div id="ui-slider">
+        <input type="range" min="2001" max="2013" value="2001" step="1" class="slider"> 
+        
+
+    </div>
+    
+    <div id ='ui-data'>
+        <label> Choose an Industry Sector:</label>
+        <select id = "sector"> 
+            <option value="AG_" selected>Agriculture, forestry, fishing, and hunting</option>
+            <option value="ENT_" >Arts, entertainment, recreation, accommodation, and food services</option>
+            <option value="CON_" >Construction</option>
+            <option value="SOC_" >Educational services, health care, and social assistance</option>
+            <option value="FIN_" >Finance, insurance, real estate, rental, and leasing</option>
+            <option value="INF_" >Information</option>
+            <option value="MAN_" >Manufacturing</option>
+            <option value="MIN_" >Mining</option>
+            <option value="BUS_" >Professional and business services</option>
+            <option value="RET_" >Retail</option>
+            <option value="TRA_" >Transportation and warehousing</option>
+            <option value="UTL_" >Utilities</option>
+            <option value="WHO_" >Wholesale Trade</option>
+            <option value="GOV_" >Government</option>
+            <option value="NAT_" >Natural Resources and Mining</option>
+            <option value="TOT_" >Total Annual Local Contribution to Real GDP</option>
+        </select>
+        
+<!--
+        <label> Choose a Metropolitan Area:</label>
+        <select id = "sector-metro"> 
+            <option value="Chicago-Naperville-Elgin" selected>Chicago</option>
+            <option value="ENT_" >Arts, entertainment, recreation, accommodation, and food services</option>
+            <option value="CON_" >Construction</option>
+            <option value="SOC_" >Educational services, health care, and social assistance</option>
+            <option value="FIN_" >Finance, insurance, real estate, rental, and leasing</option>
+        </select>
+-->
+    </div>
+
+    
+    </div>
+    
+ <div id='map'></div>
+<!--        <div id="legend">
+        <h3>Real Contribution to Local GDP</h3>
+        <svg class="legend" width="600" height="100"></svg>
+    </div>-->
+    
+
+    
+    <div id="chart-container" class = "graph" style="width: 63%; height:170px ; float: left">
+        <div id="info">
+        <p><span></span></p>
+        <p class='sectorData'>Local GDP: <span></span></p>
+            <p class='metroTotal'>Metro Area Total GDP All Years: <br><span></span></p>    
+        
+<!--
+            <svg class="legend" width="600" height="100"></svg>
+        <p class='ent'>Entertainment: <span></span></p>
+        <p class='con'>Construction: <span></span></p>
+        <p class='soc'>entertainment: <span></span></p>
+        <p class='ent'>entertainment: <span></span></p>
+        <p class='ent'>entertainment: <span></span></p>
+        <p class='ent'>entertainment: <span></span></p>
+        <p class='ent'>entertainment: <span></span></p>
+        <p class='ent'>entertainment: <span></span></p>
+        <p class='ent'>entertainment: <span></span></p>
+        <p class='ent'>entertainment: <span></span></p>
+        <p class='ent'>entertainment: <span></span></p>
+        <p class='ent'>entertainment: <span></span></p>
+-->
+        
+    </div></div>
+    <canvas id="myLineChart" width="400" height="400"></canvas>
+    
+    
+
+    
+
+    <script>
+        L.mapbox.accessToken = 'pk.eyJ1Ijoicmdkb25vaHVlIiwiYSI6Im5Ua3F4UzgifQ.PClcVzU5OUj17kuxqsY_Dg';
+
+        var map = L.mapbox.map('map', 'mapbox.light', {
+            center: [35.82, -97.58],
+            zoom: 4,
+            minZoom: 3,
+            maxZoom: 9,
+           
+        });
+
+        
+        var metroCentroids = omnivore.csv('realGDP_metro_2001-2013a.csv')
+            .on('ready',function(e) {
+                drawMap(e.target.toGeoJSON())
+            })
+            .on('error', function(e) {
+                console.log(e.error[0].message)
+            });
+        
+       
+        // global vars         
+        var currentYear = 2001,
+            data,
+            sectorData = 'AG_';
+
+        function drawMap(gdpData){
+            
+             data = L.geoJson(gdpData, {
+                pointToLayer: function(feature, layer){
+                    return L.circleMarker(layer, {
+                        color: '#8C029A',
+                        opacity: .8,
+                        weight: 1,
+                        fillOpacity: 0,
+                      //radius: calcRadius(Number(feature.properties.AG_2001))
+                    });
+
+                }
+
+            }).addTo(map);
+
+    //         total = L.geoJson(gdpData, {
+    //            pointToLayer: function(feature, layer){
+    //                return L.circleMarker(layer, {
+    //                    color: '#FF0000',
+    //                    opacity: .8,
+    //                    weight: 1,
+    //                    fillOpacity: 0,
+    //                    radius: calcRadius(Number(feature.properties.TOT_2001))
+    //                });
+    //                
+    //            }
+    //             
+    //        }).addTo(map);            
+
+            addUiListeners();
+            updateSymbols();
+            //drawChart();        
+            
+        }
+        
+        function addUiListeners(){
+            
+            // listen for changes to the temperal slider
+            $('.slider')
+                .on('input change', function() {
+                    currentYear = $(this).val();
+                    updateSymbols();
+                    $('#year span').html(currentYear);
+            });
+            
+            
+            // listen for changes to the dropdown attribute selector
+            $('select[id="sector"]').change(function(){
+                sectorData = $(this).val();
+                updateSymbols();
+            });            
+            
+        };        
+        
+        
+        function updateSymbols() {
+            
+            
+            var allRadii = [];
+            
+            data.eachLayer(function(layer) {
+                var props = layer.feature.properties;
+                //var percent = Number(props[sectorData + currentYear]/props['TOT_'+currentYear])*100;
+                var realGDP = Number(props[sectorData + currentYear])
+                var radius = calcRadius(realGDP);
+                layer.setRadius(radius);
+                allRadii.push(radius);
+                infoWindow(props, realGDP);
+                //console.log(props.metro +' '+ realGDP)
+                
+                
+                
+            });
+            
+//            total.eachLayer(function(layer) {
+//                radius = (calcRadius(Number(layer.feature.properties['TOT_'+currentYear])))
+//                layer.setRadius(radius)
+//                allRadii.push(radius)
+//            });
+            
+            //drawLegend(allRadii);        
+        }
+        
+       function calcRadius(val) {
+            
+            var radius = Math.sqrt(val/Math.PI);
+            return radius * .6;
+            
+        }
+        
+        
+//        function drawLegend(allRadii){
+//            var legend =$('.legend')
+//            var circles = {
+//                max: ss.max(allRadii),
+//                median: ss.median(allRadii),
+//                min: ss.min(allRadii),
+//                
+//            }
+//            
+//           // console.log(circles)
+//            
+//            var svgCircle = '';
+//            
+//            var reverseCalc = function(radius) {
+//                
+//                return Math.round(Math.pow(radius/.6, 2) * Math.PI)
+//                
+//            }
+//                
+//            for (var circle in circles) {
+//                var radiusValue = circles[circle];
+//                
+//                var actualValue = reverseCalc(radiusValue);
+//                
+//                svgCircle += '<circle cx="50%" cy="' + (radiusValue -180) * -1 + '" r="' + radiusValue + '" stroke = "#DEDEDE" stroke-width="2" fill="rgba(140, 2, 154, 0.30)" />';
+//                
+//                svgCircle += '<text x="'+ 85 +'" y = "'+ (radiusValue -160) * -1 + '" fill="#222222">'+ actualValue +'</text>'
+//            }
+//            
+//            legend.html(svgCircle);
+//        }
+        
+        function infoWindow() {
+            var info = $('#info');
+            
+            data.on('mouseover', function(e){
+                
+
+                info.show()
+                
+                var props = e.layer.feature.properties;
+                var displayMetro = props.metro;
+                var displayGDP = Number(props[sectorData + currentYear]);
+                $('#info span').text(displayMetro+' '+currentYear);
+                $('.sectorData span').text(displayGDP);
+                
+                e.layer.setStyle({ fillOpacity: .6 });
+                
+//                var yData = [                
+//                        Number(props.TOT_2001), 
+//                        Number(props.TOT_2002), 
+//                        Number(props.TOT_2003), 
+//                        Number(props.TOT_2004), 
+//                        Number(props.TOT_2005),
+//                        Number(props.TOT_2006),
+//                        Number(props.TOT_2007),
+//                        Number(props.TOT_2008),
+//                        Number(props.TOT_2009),
+//                        Number(props.TOT_2010), 
+//                        Number(props.TOT_2011),
+//                        Number(props.TOT_2012),
+//                        Number(props.TOT_2013)];
+//            
+//                var xData = [
+//                        2001,
+//                        2002, 
+//                        2003,
+//                        2004,
+//                        2005,
+//                        2006,
+//                        2007,
+//                        2008,
+//                        2009,
+//                        2010,
+//                        2011,
+//                        2012,
+//                        2013];
+//                
+//                var chartData = [                 
+//                        [2001, Number(props.TOT_2001)], 
+//                        [2002, Number(props.TOT_2002)], 
+//                        [2003, Number(props.TOT_2003)],
+//                        [2004, Number(props.TOT_2004)],
+//                        [2005, Number(props.TOT_2005)],
+//                        [2006, Number(props.TOT_2006)],
+//                        [2007, Number(props.TOT_2007)],
+//                        [2008, Number(props.TOT_2008)],
+//                        [2009, Number(props.TOT_2009)],
+//                        [2010, Number(props.TOT_2010)], 
+//                        [2011, Number(props.TOT_2011)],
+//                        [2012, Number(props.TOT_2012)],
+//                        [2013, Number(props.TOT_2013)]];
+//                
+                $('.metroTotal span').text( 
+                        "2001: $"+ (props["TOT_2001"]*1000000).toLocaleString() +
+                        ", 2002: $"+ (props["TOT_2002"]*1000000).toLocaleString() +
+                        ", 2003: $"+ (props["TOT_2003"]*1000000).toLocaleString() +
+                        ", 2004: $"+ (props["TOT_2004"]*1000000).toLocaleString() +
+                        ", 2005: $"+ (props["TOT_2005"]*1000000).toLocaleString() +
+                        ", 2006: $"+ (props["TOT_2006"]*1000000).toLocaleString() +
+                        ", 2007: $"+ (props["TOT_2007"]*1000000).toLocaleString() +
+                        ", 2008: $"+ (props["TOT_2008"]*1000000).toLocaleString() +
+                        ", 2009: $"+ (props["TOT_2009"]*1000000).toLocaleString() +
+                        ", 2010: $"+ (props["TOT_2010"]*1000000).toLocaleString() +
+                        ", 2011: $"+ (props["TOT_2011"]*1000000).toLocaleString() +
+                        ", 2012: $"+ (props["TOT_2012"]*1000000).toLocaleString() +
+                        ", 2013: $"+ (props["TOT_2013"]*1000000).toLocaleString() );
+                        
+        
+                updateInfo(xData, yData)
+                       
+                
+            });
+                    
+            data.on('mouseout', function(e){
+               
+                e.layer.setStyle({ fillOpacity: 0});
+                
+            });
+            
+        }
+            function updateInfo(){
+                
+            }
+
+            
+        
+    
+
+    </script>
+</body>
+</html>
