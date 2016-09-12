@@ -4,11 +4,11 @@
     <meta charset=utf-8 />
     <title>US Metropolitan Economies</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-    <script src='http://mbostock.github.com/d3/d3.v2.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.2/d3.min.js"></script>
     <script src='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.js'></script>
     <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js'></script>
     <script src='https://code.jquery.com/jquery-1.12.0.min.js'></script>
-    <script src='https://npmcdn.com/simple-statistics@2.0.0/dist/simple-statistics.min.js'></script>    
+    <script src='https://npmcdn.com/simple-statistics@2.0.0/dist/simple-statistics.min.js'></script>
 
     <link href='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.css' rel='stylesheet'/>
     <link href="https://fonts.googleapis.com/css?family=Scope+One" rel="stylesheet"/>
@@ -109,7 +109,7 @@
             box-shadow:  0 0 15px rgba(0,0,0,0.2);   
         }
 
-         #year{
+        #year{
             padding:130px 200px 10px 80px;
             color: whitesmoke;
             font-weight: 200;
@@ -133,7 +133,6 @@
             left: 3px;
             top: 3px;
             padding: 6px 15px 8px;
-          
             font-size: .8em;
 /*            position: absolute;
             background: whitesmoke;
@@ -146,31 +145,36 @@
         #info p{
             margin: 3px 0px 4px;
         }
-        .path {
-            stroke: steelblue;
-            stroke-width: 1;
-            fill: none;
+        
+        .axis {
+          font: 10px sans-serif;
         }
 
-        .axis {
+        .axis-title {
+          text-anchor: end;
+        }
+
+        .axis path,
+        .axis line {
+          fill: none;
+          stroke: #000;
           shape-rendering: crispEdges;
         }
 
-        .x.axis line {
-          stroke: lightgrey;
-        }
-
-        .x.axis .minor {
-          stroke-opacity: .5;
-        }
-
-        .x.axis path {
+        .axis--x path {
           display: none;
         }
 
-        .y.axis line, .y.axis path {
+        .axis--y .tick:not(.tick--one) line {
+          stroke-opacity: .15;
+        }
+
+        .line {
           fill: none;
-          stroke: #000;
+          stroke: steelblue;
+          stroke-width: 1.5px;
+          stroke-linejoin: round;
+          stroke-linecap: round;
         }
     
        
@@ -186,7 +190,7 @@
     <div id="year">Year: <span>2001</span></div>
     <p></p>
     <h2><br>About this map:</h2>
-    <p>Compare industries' contribution to local GDP across the US using the data selector. Use the date slider to see positive or negative growth over the years 2001 to 2013. All GDP data is sourced from the Bureau of Economic Analysis: <a href="https://www.bea.gov">See or Browse Data</a></p>
+    <p>Compare industries' contribution to local GDP across the US using the data selector. Use the date slider to see positive or negative growth over the years 2001 to 2013. Dollar values are represented in billions, 'chained' to 2009 values for relative comparability. All GDP data is sourced from the Bureau of Economic Analysis: <a href="https://www.bea.gov">See or Browse Data</a></p>
     <p></p>
     
     <div id="ui-slider">
@@ -239,10 +243,12 @@
     
 
     
-    <div id="chart-container" style="width: 50%; height:170px">
+    <div id="chart-container" class = "graph" style="width: 63%; height:170px ; float: left">
         <div id="info">
         <p><span></span></p>
-       <p class='sectorData'>Local GDP: <span></span></p>
+        <p class='sectorData'>Local GDP: <span></span></p>
+            <p class='metroTotal'>Metro Area Total GDP All Years: <br><span></span></p>    
+        
 <!--
             <svg class="legend" width="600" height="100"></svg>
         <p class='ent'>Entertainment: <span></span></p>
@@ -260,6 +266,7 @@
 -->
         
     </div></div>
+    <canvas id="myLineChart" width="400" height="400"></canvas>
     
     
 
@@ -269,7 +276,7 @@
         L.mapbox.accessToken = 'pk.eyJ1Ijoicmdkb25vaHVlIiwiYSI6Im5Ua3F4UzgifQ.PClcVzU5OUj17kuxqsY_Dg';
 
         var map = L.mapbox.map('map', 'mapbox.light', {
-            center: [39.82, -90.58],
+            center: [35.82, -97.58],
             zoom: 4,
             minZoom: 3,
             maxZoom: 9,
@@ -323,7 +330,7 @@
 
             addUiListeners();
             updateSymbols();
-                    
+            //drawChart();        
             
         }
         
@@ -342,9 +349,9 @@
             $('select[id="sector"]').change(function(){
                 sectorData = $(this).val();
                 updateSymbols();
-            })
+            });            
             
-        }        
+        };        
         
         
         function updateSymbols() {
@@ -361,6 +368,8 @@
                 allRadii.push(radius);
                 infoWindow(props, realGDP);
                 //console.log(props.metro +' '+ realGDP)
+                
+                
                 
             });
             
@@ -425,49 +434,41 @@
                 var displayMetro = props.metro;
                 var displayGDP = Number(props[sectorData + currentYear]);
                 $('#info span').text(displayMetro+' '+currentYear);
-                $('.sectorData span').text(displayGDP);                
+                $('.sectorData span').text(displayGDP);
+                
                 e.layer.setStyle({ fillOpacity: .6 });
                 
-                    var yData = [                
-                        Number(props.TOT_2001), 
-                        Number(props.TOT_2002), 
-                        Number(props.TOT_2003),
-                        Number(props.TOT_2004),
-                        Number(props.TOT_2005),
-                        Number(props.TOT_2006),
-                        Number(props.TOT_2007),
-                        Number(props.TOT_2008),
-                        Number(props.TOT_2009),
-                        Number(props.TOT_2010), 
-                        Number(props.TOT_2011),
-                        Number(props.TOT_2012),
-                        Number(props.TOT_2013)],
-                    xData = [
-                        2001,
-                        2002, 
-                        2003,
-                        2004,
-                        2005,
-                        2006,
-                        2007,
-                        2008,
-                        2009,
-                        2010,
-                        2011,
-                        2012,
-                        2013];
-
-        
-                //console.log(xData, yData)
-                
-                
-		// define dimensions of graph
-		var m = [80, 80, 80, 80]; // margins
-		var w = 1000 - m[1] - m[3]; // width
-		var h = 300 - m[0] - m[2]; // height
-		
-		// create a simple data array that we'll plot with a line (this array represents only the Y values, X will just be the index location)
-//		var chartData = [                
+//                var yData = [                
+//                        Number(props.TOT_2001), 
+//                        Number(props.TOT_2002), 
+//                        Number(props.TOT_2003), 
+//                        Number(props.TOT_2004), 
+//                        Number(props.TOT_2005),
+//                        Number(props.TOT_2006),
+//                        Number(props.TOT_2007),
+//                        Number(props.TOT_2008),
+//                        Number(props.TOT_2009),
+//                        Number(props.TOT_2010), 
+//                        Number(props.TOT_2011),
+//                        Number(props.TOT_2012),
+//                        Number(props.TOT_2013)];
+//            
+//                var xData = [
+//                        2001,
+//                        2002, 
+//                        2003,
+//                        2004,
+//                        2005,
+//                        2006,
+//                        2007,
+//                        2008,
+//                        2009,
+//                        2010,
+//                        2011,
+//                        2012,
+//                        2013];
+//                
+//                var chartData = [                 
 //                        [2001, Number(props.TOT_2001)], 
 //                        [2002, Number(props.TOT_2002)], 
 //                        [2003, Number(props.TOT_2003)],
@@ -481,83 +482,47 @@
 //                        [2011, Number(props.TOT_2011)],
 //                        [2012, Number(props.TOT_2012)],
 //                        [2013, Number(props.TOT_2013)]];
+//                
+                $('.metroTotal span').text( 
+                        "2001: $"+ (props["TOT_2001"]*1000000).toLocaleString() +
+                        ", 2002: $"+ (props["TOT_2002"]*1000000).toLocaleString() +
+                        ", 2003: $"+ (props["TOT_2003"]*1000000).toLocaleString() +
+                        ", 2004: $"+ (props["TOT_2004"]*1000000).toLocaleString() +
+                        ", 2005: $"+ (props["TOT_2005"]*1000000).toLocaleString() +
+                        ", 2006: $"+ (props["TOT_2006"]*1000000).toLocaleString() +
+                        ", 2007: $"+ (props["TOT_2007"]*1000000).toLocaleString() +
+                        ", 2008: $"+ (props["TOT_2008"]*1000000).toLocaleString() +
+                        ", 2009: $"+ (props["TOT_2009"]*1000000).toLocaleString() +
+                        ", 2010: $"+ (props["TOT_2010"]*1000000).toLocaleString() +
+                        ", 2011: $"+ (props["TOT_2011"]*1000000).toLocaleString() +
+                        ", 2012: $"+ (props["TOT_2012"]*1000000).toLocaleString() +
+                        ", 2013: $"+ (props["TOT_2013"]*1000000).toLocaleString() );
+                        
+            
+        
                 
-                var data1 = xData;
                 
-                console.log(xData)
-
-		// X scale will fit all values from data[] within pixels 0-w
-		var x = d3.scale.linear().domain([0, xData.length]).range([0, w]);
-		// Y scale will fit values from 0-10 within pixels h-0 (Note the inverted domain for the y-scale: bigger is up!)
-		var y = d3.scale.linear().domain([0, 10]).range([h, 0]);
-			// automatically determining max range can work something like this
-			// var y = d3.scale.linear().domain([0, d3.max(data)]).range([h, 0]);
-
-		// create a line function that can convert data[] into x and y points
-		var line = d3.svg.line()
-			// assign the X function to plot our line as we wish
-			.x(function(d,i) { 
-				// verbose logging to show what's actually being done
-				console.log('Plotting X value for data point: ' + d + ' using index: ' + i + ' to be at: ' + x(i) + ' using our xScale.');
-				// return the X coordinate where we want to plot this datapoint
-				return x(i); 
-			})
-			.y(function(d) { 
-				// verbose logging to show what's actually being done
-				console.log('Plotting Y value for data point: ' + d + ' to be at: ' + y(d) + " using our yScale.");
-				// return the Y coordinate where we want to plot this datapoint
-				return y(d); 
-			})
-
-			// Add an SVG element with the desired dimensions and margin.
-			var graph = d3.select("#chart-container").append("svg:svg")
-			      .attr("width", w + m[1] + m[3])
-			      .attr("height", h + m[0] + m[2])
-			    .append("svg:g")
-			      .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
-
-			// create yAxis
-			var xAxis = d3.svg.axis().scale(x).tickSize(-h).tickSubdivide(true);
-			// Add the x-axis.
-			graph.append("svg:g")
-			      .attr("class", "x axis")
-			      .attr("transform", "translate(0," + h + ")")
-			      .call(xAxis);
-
-
-			// create left yAxis
-			var yAxisLeft = d3.svg.axis().scale(y).ticks(4).orient("left");
-			// Add the y-axis to the left
-			graph.append("svg:g")
-			      .attr("class", "y axis")
-			      .attr("transform", "translate(-25,0)")
-			      .call(yAxisLeft);
-			
-  			// Add the line by appending an svg:path element with the data line we created above
-			// do this AFTER the axes above so that the line is above the tick-lines
-  			graph.append("svg:path").attr("d", line(xData));
-
-
-        });
+                updateInfo(xData, yData)
+                
+                
+                
+            });
+                    
+            data.on('mouseout', function(e){
                
-          data.on('mouseout', function(e){
-               
-                //info.hide()
                 e.layer.setStyle({ fillOpacity: 0});
                 
-        });
-
+            });
+            
+        }
+         
+            
+            function updateInfo(){
                 
             }
+
             
-
-               
-
         
-    
-        
-           
-	
     
 
     </script>
