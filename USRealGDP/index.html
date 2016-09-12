@@ -434,7 +434,7 @@
                 var displayMetro = props.metro;
                 var displayGDP = Number(props[sectorData + currentYear]);
                 $('#info span').text(displayMetro+' '+currentYear);
-                $('.sectorData span').text(displayGDP);
+                $('.sectorData span').text((displayGDP*1000000).toLocaleString());
                 
                 e.layer.setStyle({ fillOpacity: .6 });
                 
