@@ -481,6 +481,143 @@
 
             for(var i = 2001; i <= 2013; i++) {
                 chartData.push([i, Number(props[sectorData + i])]);
+
+            
+            //drawLegend(allRadii);        
+        }
+        
+       function calcRadius(val) {
+            
+            var radius = Math.sqrt(val/Math.PI);
+            return radius * .6;
+            
+        }
+        
+        
+//        function drawLegend(allRadii){
+//            var legend =$('.legend')
+//            var circles = {
+//                max: ss.max(allRadii),
+//                median: ss.median(allRadii),
+//                min: ss.min(allRadii),
+//                
+//            }
+//            
+//           // console.log(circles)
+//            
+//            var svgCircle = '';
+//            
+//            var reverseCalc = function(radius) {
+//                
+//                return Math.round(Math.pow(radius/.6, 2) * Math.PI)
+//                
+//            }
+//                
+//            for (var circle in circles) {
+//                var radiusValue = circles[circle];
+//                
+//                var actualValue = reverseCalc(radiusValue);
+//                
+//                svgCircle += '<circle cx="50%" cy="' + (radiusValue -180) * -1 + '" r="' + radiusValue + '" stroke = "#DEDEDE" stroke-width="2" fill="rgba(140, 2, 154, 0.30)" />';
+//                
+//                svgCircle += '<text x="'+ 85 +'" y = "'+ (radiusValue -160) * -1 + '" fill="#222222">'+ actualValue +'</text>'
+//            }
+//            
+//            legend.html(svgCircle);
+//        }
+        
+        function infoWindow() {
+            var info = $('#info');
+            
+            data.on('mouseover', function(e){
+                
+
+                info.show()
+                
+                var props = e.layer.feature.properties;
+                var displayMetro = props.metro;
+                var displayGDP = Number(props[sectorData + currentYear]);
+                $('#info span').text(displayMetro+' '+currentYear);
+                $('.sectorData span').text((displayGDP*1000000).toLocaleString());
+                
+                e.layer.setStyle({ fillOpacity: .6 });
+                
+//                var yData = [                
+//                        Number(props.TOT_2001), 
+//                        Number(props.TOT_2002), 
+//                        Number(props.TOT_2003), 
+//                        Number(props.TOT_2004), 
+//                        Number(props.TOT_2005),
+//                        Number(props.TOT_2006),
+//                        Number(props.TOT_2007),
+//                        Number(props.TOT_2008),
+//                        Number(props.TOT_2009),
+//                        Number(props.TOT_2010), 
+//                        Number(props.TOT_2011),
+//                        Number(props.TOT_2012),
+//                        Number(props.TOT_2013)];
+//            
+//                var xData = [
+//                        2001,
+//                        2002, 
+//                        2003,
+//                        2004,
+//                        2005,
+//                        2006,
+//                        2007,
+//                        2008,
+//                        2009,
+//                        2010,
+//                        2011,
+//                        2012,
+//                        2013];
+//                
+//                var chartData = [                 
+//                        [2001, Number(props.TOT_2001)], 
+//                        [2002, Number(props.TOT_2002)], 
+//                        [2003, Number(props.TOT_2003)],
+//                        [2004, Number(props.TOT_2004)],
+//                        [2005, Number(props.TOT_2005)],
+//                        [2006, Number(props.TOT_2006)],
+//                        [2007, Number(props.TOT_2007)],
+//                        [2008, Number(props.TOT_2008)],
+//                        [2009, Number(props.TOT_2009)],
+//                        [2010, Number(props.TOT_2010)], 
+//                        [2011, Number(props.TOT_2011)],
+//                        [2012, Number(props.TOT_2012)],
+//                        [2013, Number(props.TOT_2013)]];
+//                
+                $('.metroTotal span').text( 
+                        "2001: $"+ (props["TOT_2001"]*1000000).toLocaleString() +
+                        ", 2002: $"+ (props["TOT_2002"]*1000000).toLocaleString() +
+                        ", 2003: $"+ (props["TOT_2003"]*1000000).toLocaleString() +
+                        ", 2004: $"+ (props["TOT_2004"]*1000000).toLocaleString() +
+                        ", 2005: $"+ (props["TOT_2005"]*1000000).toLocaleString() +
+                        ", 2006: $"+ (props["TOT_2006"]*1000000).toLocaleString() +
+                        ", 2007: $"+ (props["TOT_2007"]*1000000).toLocaleString() +
+                        ", 2008: $"+ (props["TOT_2008"]*1000000).toLocaleString() +
+                        ", 2009: $"+ (props["TOT_2009"]*1000000).toLocaleString() +
+                        ", 2010: $"+ (props["TOT_2010"]*1000000).toLocaleString() +
+                        ", 2011: $"+ (props["TOT_2011"]*1000000).toLocaleString() +
+                        ", 2012: $"+ (props["TOT_2012"]*1000000).toLocaleString() +
+                        ", 2013: $"+ (props["TOT_2013"]*1000000).toLocaleString() );
+                        
+        
+                updateInfo(xData, yData)
+                       
+                
+            });
+                    
+            data.on('mouseout', function(e){
+               
+                e.layer.setStyle({ fillOpacity: 0});
+                
+            });
+            
+        }
+            function updateInfo(){
+                
+
             }
 
             // convert city data   
