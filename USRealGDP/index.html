@@ -279,14 +279,6 @@
 
             </svg>
     </div>
-
-    
-      
-    
-    
-    
-    
-    
       
       
 
@@ -334,7 +326,6 @@
         });
 
 
-<<<<<<< HEAD
         function drawMap(gdpData){
             
              data = L.geoJson(gdpData, {
@@ -410,7 +401,7 @@
                 
             });
             
-=======
+
     // global vars for chart      
     var currentYear = 2001,
         data,
@@ -551,7 +542,7 @@
 
         });
 
->>>>>>> patch-d3-chart
+
 //            total.eachLayer(function(layer) {
 //                radius = (calcRadius(Number(layer.feature.properties['TOT_'+currentYear])))
 //                layer.setRadius(radius)
@@ -638,11 +629,9 @@
                 var displayGDP = Number(props[sectorData + currentYear]);
                 $('#info span').text(displayMetro+' '+currentYear);
                 $('.sectorData span').text((displayGDP*1000000).toLocaleString());
-<<<<<<< HEAD
-<<<<<<< HEAD
+
                 $('.percentTotal span').text((displayGDP/props["TOT_" + currentYear]*100).toLocaleString())
-=======
->>>>>>> master
+
                 
                 e.layer.setStyle({ fillOpacity: .6 });
                 
@@ -667,7 +656,7 @@
                 
                 
                 //Show Total GDP for all years
-=======
+
                 
                 e.layer.setStyle({ fillOpacity: .6 });
                 
@@ -701,7 +690,7 @@
 //                        2012,
 //                        2013];
 //                
->>>>>>> patch-d3-chart
+
 //                var chartData = [                 
 //                        [2001, Number(props.TOT_2001)], 
 //                        [2002, Number(props.TOT_2002)], 
@@ -757,7 +746,7 @@
                      close: d[1]
                   };
 
-<<<<<<< HEAD
+
                  console.log(arrData[0])
 
             var margin = {top: 20, right: 140, bottom: 35, left: 75},
@@ -767,11 +756,11 @@
             var bisectDate = d3.bisector(function(d) { return d.date; }).left,
                 formatValue = d3.format(",.2f"),
                 formatCurrency = function(d) { return "$" + formatValue(d); };     
-=======
+
               });
 
             return chartData;       
->>>>>>> patch-d3-chart
+
 
     }
 
