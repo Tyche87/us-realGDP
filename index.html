@@ -4,12 +4,12 @@
     <meta charset=utf-8 />
     <title>US Metropolitan Economies</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.2/d3.min.js"></script>
+    <script src='http://d3js.org/d3.v3.js'></script>
     <script src='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.js'></script>
     <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js'></script>
     <script src='https://code.jquery.com/jquery-1.12.0.min.js'></script>
     <script src='https://npmcdn.com/simple-statistics@2.0.0/dist/simple-statistics.min.js'></script>
-
+    
     <link href='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.css' rel='stylesheet'/>
     <link href="https://fonts.googleapis.com/css?family=Scope+One" rel="stylesheet"/>
     <style>
@@ -117,66 +117,76 @@
             text-align: left;
             box-shadow:  0 0 15px rgba(0,0,0,0.2);
         }
+        
         #chart-container {
             position: absolute;
             right: 10px;
-            bottom: 20px;
+            bottom: 25px;
             padding: 0px 15px 0px 15px;
             background: rgba(90, 90, 90, 0.30);
             border: 2px solid #d3d3d3;
             box-shadow:  0 0 15px rgba(0,0,0,0.2);
             font-size: 1em;
-            color: #3d3d3d;
+            color: #000;
+            
+        }
+        .chart{
+            position: absolute;
+            right: 100px;
+            bottom: 25px;
+            padding: 0px 15px 0px 15px;
+   
         }
         #info {
             position: absolute;
-            left: 3px;
+            left: 100px;
             top: 3px;
             padding: 6px 15px 8px;
-            font-size: .8em;
-/*            position: absolute;
-            background: whitesmoke;
+            font-size: 1em;
             
-            padding: 6px 15px 8px;
-            border: 2px solid #d3d3d3;
-            border-radius: 7px;
-            box-shadow:  0 0 15px rgba(0,0,0,0.2);*/
-        }
-        #info p{
-            margin: 3px 0px 4px;
+    
         }
         
-        .axis {
-          font: 10px sans-serif;
+        #info p{
+            margin: 3px 10px 4px;
+            float: left;
+            
         }
-
-        .axis-title {
-          text-anchor: end;
-        }
-
+        
         .axis path,
         .axis line {
           fill: none;
           stroke: #000;
           shape-rendering: crispEdges;
+              
         }
 
-        .axis--x path {
+        .x.axis path {
           display: none;
-        }
-
-        .axis--y .tick:not(.tick--one) line {
-          stroke-opacity: .15;
+            font-size: .6em;
         }
 
         .line {
           fill: none;
-          stroke: steelblue;
-          stroke-width: 1.5px;
-          stroke-linejoin: round;
-          stroke-linecap: round;
+          stroke: orange;
+          stroke-width: 2;
+        } 
+        
+        .labels{
+          fill: none;
+          stroke: orange;
+          stroke-width: 2px;        
         }
-    
+        
+        .overlay {
+          fill: none;
+          pointer-events: all;
+        }
+
+        .focus circle {
+          fill: none;
+          stroke: steelblue;
+        }
        
         
     </style>
@@ -190,17 +200,11 @@
     <div id="year">Year: <span>2001</span></div>
     <p></p>
     <h2><br>About this map:</h2>
-<<<<<<< HEAD
-    <p>Compare metropolitan Gross Domestic Product values across the US, and by main industry sectors using the data selector. Use the date slider to see positive or negative growth over the years 2001 to 2013. Dollar values are represented in billions, 'chained' to 2009 values for relative comparability. All GDP data is sourced from the Bureau of Economic Analysis: <a href="https://www.bea.gov">See or Browse Data</a></p>
-=======
-    <p>Compare metropolitan Gross Domestic Product values across the US, and by main industry sector using the data selector. Use the date slider to see positive or negative growth over the years 2001 to 2013. Dollar values are represented in billions, 'chained' to 2009 values for relative comparability. All GDP data is sourced from the Bureau of Economic Analysis: <a href="https://www.bea.gov">See or Browse Data</a></p>
->>>>>>> master
+    <p>Compare industries' contribution to local GDP across the US using the data selector. Use the date slider to see positive or negative growth over the years 2001 to 2013. Dollar values are represented in billions, 'chained' to 2009 values for relative comparability. All GDP data is sourced from the Bureau of Economic Analysis: <a href="https://www.bea.gov">See or Browse Data</a></p>
     <p></p>
     
     <div id="ui-slider">
-        <input type="range" min="2001" max="2013" value="2001" step="1" class="slider"> 
-        
-
+        <input type="range" min="2001" max="2013" value="2001" step="1" class="slider">
     </div>
     
     <div id ='ui-data'>
@@ -237,22 +241,34 @@
     </div>
 
     
-    </div>
+</div>  <!-- end side panel -->
     
- <div id='map'></div>
-<!--        <div id="legend">
-        <h3>Real Contribution to Local GDP</h3>
-        <svg class="legend" width="600" height="100"></svg>
-    </div>-->
     
+    
+    <div id='map'> </div>
+    
+       
+        
+     <p class='percentTotal'>Percent of Total GDP: <span></span></p>
+
+    <div id='chart-container'  style="width: 63%; height:170px ; float: left">
+           
+    <div id='info'>
+            <p><span></span></p>
+            <p class='sectorData'>Sector GDP: $<span>0.00</span></p>
+            <p class='percentTotal'>Sector % of Total GDP: <span>0.0</span>%</p></div>
+    <svg id='chart' style="width: 100%; height:170px"></svg></div>
 
     
-    <div id="chart-container" class = "graph" style="width: 63%; height:170px ; float: left">
-        <div id="info">
-        <p><span></span></p>
-        <p class='sectorData'>Local GDP: $<span></span></p>
-            <p class='metroTotal'>Metro Area Total GDP All Years: <br><span></span></p>    
-        
+      
+    
+    
+    
+    
+    
+      
+      
+
 <!--
             <svg class="legend" width="600" height="100"></svg>
         <p class='ent'>Entertainment: <span></span></p>
@@ -269,119 +285,203 @@
         <p class='ent'>entertainment: <span></span></p>
 -->
         
-    </div></div>
-    <canvas id="myLineChart" width="400" height="400"></canvas>
+
+   
+
+<script>
+
+(function() {
     
     
+    L.mapbox.accessToken = 'pk.eyJ1Ijoicmdkb25vaHVlIiwiYSI6Im5Ua3F4UzgifQ.PClcVzU5OUj17kuxqsY_Dg';
 
-    
+    var map = L.mapbox.map('map', 'mapbox.light', {
+        center: [35.82, -97.58],
+        zoom: 4,
+        minZoom: 3,
+        maxZoom: 9,
 
-    <script>
-        L.mapbox.accessToken = 'pk.eyJ1Ijoicmdkb25vaHVlIiwiYSI6Im5Ua3F4UzgifQ.PClcVzU5OUj17kuxqsY_Dg';
+    });
 
-        var map = L.mapbox.map('map', 'mapbox.light', {
-            center: [35.82, -97.58],
-            zoom: 4,
-            minZoom: 3,
-            maxZoom: 9,
-           
+
+    var metroCentroids = omnivore.csv('realGDP_metro_2001-2013a.csv')
+        .on('ready',function(e) {
+            drawMap(e.target.toGeoJSON())
+        })
+        .on('error', function(e) {
+            console.log(e.error[0].message)
         });
 
+
+    // global vars for chart      
+    var currentYear = 2001,
+        data,
+        sectorData = 'AG_';
+
+    var margin = {top: 20, right: 100, bottom: 35, left: 75},
+        width = 960 - margin.left - margin.right,
+        height = 175 - margin.top - margin.bottom;
+
+    var bisectDate = d3.bisector(function(d) { return d.date; }).left,
+        formatValue = d3.format(",.2f"),
+        formatCurrency = function(d) { return "$" + formatValue(d); };     
+
+    var x = d3.scale.linear()
+        .range([0, width])
+
+    var y = d3.scale.linear()
+        .range([height, 0]);
+
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient("bottom");
+
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient("left").ticks(5);
+
+    var line = d3.svg.line()
+        .x(function(d) { return x(d.date); })
+        .y(function(d) { return y(d.close); })
+        .interpolate("basis");
+
+    var svg = d3.select("#chart").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+    svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+      .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 15)
+      .attr("dy", ".35em")
+      .style("text-anchor", "end")
+      .text("GDP (MM$)");
+    
+    // create reference to line for updating later in updateChart
+    var path = svg.append("path").attr('class', 'line');
+
+    function drawMap(gdpData){
+
+         data = L.geoJson(gdpData, {
+            pointToLayer: function(feature, layer){
+                return L.circleMarker(layer, {
+                    color: '#8C029A',
+                    opacity: .8,
+                    weight: 1,
+                    fillOpacity: 0,
+                  //radius: calcRadius(Number(feature.properties.AG_2001))
+                });
+
+            },
+             onEachFeature(feature, layer) {
+
+                 layer.on('mouseover', function() {
+
+                     var layerData = getChartData(feature);
+                     updateChart(layerData);
+
+                 });
+
+             }
+
+        }).addTo(map);
         
-        var metroCentroids = omnivore.csv('realGDP_metro_2001-2013a.csv')
-            .on('ready',function(e) {
-                drawMap(e.target.toGeoJSON())
-            })
-            .on('error', function(e) {
-                console.log(e.error[0].message)
-            });
-        
-       
-        // global vars         
-        var currentYear = 2001,
-            data,
-            sectorData = 'AG_';
 
-        function drawMap(gdpData){
-            
-             data = L.geoJson(gdpData, {
-                pointToLayer: function(feature, layer){
-                    return L.circleMarker(layer, {
-                        color: '#8C029A',
-                        opacity: .8,
-                        weight: 1,
-                        fillOpacity: 0,
-                      //radius: calcRadius(Number(feature.properties.AG_2001))
-                    });
+//         total = L.geoJson(gdpData, {
+//            pointToLayer: function(feature, layer){
+//                return L.circleMarker(layer, {
+//                    color: '#FF0000',
+//                    opacity: .8,
+//                    weight: 1,
+//                    fillOpacity: 0,
+//                    radius: calcRadius(Number(feature.properties.TOT_2001))
+//                });
+//                
+//            }
+//             
+//        }).addTo(map);            
 
-                }
+        addUiListeners();
+        updateSymbols();
+  
 
-            }).addTo(map);
+    }
 
-    //         total = L.geoJson(gdpData, {
-    //            pointToLayer: function(feature, layer){
-    //                return L.circleMarker(layer, {
-    //                    color: '#FF0000',
-    //                    opacity: .8,
-    //                    weight: 1,
-    //                    fillOpacity: 0,
-    //                    radius: calcRadius(Number(feature.properties.TOT_2001))
-    //                });
-    //                
-    //            }
-    //             
-    //        }).addTo(map);            
+    function addUiListeners(){
 
-            addUiListeners();
-            updateSymbols();
-            //drawChart();        
-            
-        }
-        
-        function addUiListeners(){
-            
-            // listen for changes to the temperal slider
-            $('.slider')
-                .on('input change', function() {
-                    currentYear = $(this).val();
-                    updateSymbols();
-                    $('#year span').html(currentYear);
-            });
-            
-            
-            // listen for changes to the dropdown attribute selector
-            $('select[id="sector"]').change(function(){
-                sectorData = $(this).val();
+        // listen for changes to the temperal slider
+        $('.slider')
+            .on('input change', function() {
+                currentYear = $(this).val();
                 updateSymbols();
-            });            
-            
-        };        
-        
-        
-        function updateSymbols() {
-            
-            
-            var allRadii = [];
-            
-            data.eachLayer(function(layer) {
-                var props = layer.feature.properties;
-                //var percent = Number(props[sectorData + currentYear]/props['TOT_'+currentYear])*100;
-                var realGDP = Number(props[sectorData + currentYear])
-                var radius = calcRadius(realGDP);
-                layer.setRadius(radius);
-                allRadii.push(radius);
-                infoWindow(props, realGDP);
-                //console.log(props.metro +' '+ realGDP)
-                
-                
-                
-            });
-            
+                $('#year span').html(currentYear);
+        });
+
+
+        // listen for changes to the dropdown attribute selector
+        $('select[id="sector"]').change(function(){
+            sectorData = $(this).val();
+            updateSymbols(sectorData);
+
+        });            
+
+    };        
+
+
+    function updateSymbols() {
+
+
+        var allRadii = [];
+
+        data.eachLayer(function(layer) {
+            var props = layer.feature.properties;
+            var percent = Number(props[sectorData + currentYear]/props['TOT_'+currentYear])*100;
+            var realGDP = Number(props[sectorData + currentYear])
+            var radius = calcRadius(realGDP);
+            layer.setRadius(radius);
+            allRadii.push(radius);
+            //console.log(props.metro +' '+ realGDP)
+
+        });
+
 //            total.eachLayer(function(layer) {
 //                radius = (calcRadius(Number(layer.feature.properties['TOT_'+currentYear])))
 //                layer.setRadius(radius)
 //                allRadii.push(radius)
 //            });
+
+        //drawLegend(allRadii);  
+
+
+    }
+
+   function calcRadius(val) {
+
+        var radius = Math.sqrt(val/Math.PI);
+        return radius * .6;
+
+    }
+
+
+
+    function getChartData(feature) {
+
+            var props = feature.properties;
+          
+            var chartData = [];
+
+            for(var i = 2001; i <= 2013; i++) {
+                chartData.push([i, Number(props["TOT_" + i])]);
+
             
             //drawLegend(allRadii);        
         }
@@ -517,12 +617,69 @@
         }
             function updateInfo(){
                 
+
             }
 
-            
-        
-    
+            // convert city data   
+            var chartData = chartData.map(function(d) {
+                  return {
+                     date: d[0],
+                     close: d[1]
+                  };
 
-    </script>
+              });
+
+            return chartData;       
+
+    }
+
+    //function updateInfo(){}
+
+    //D3 line Chart
+    function updateChart(chartData){  
+
+           x.domain(d3.extent(chartData, function(d) { return d.date; }));
+           y.domain(d3.extent(chartData, function(d) { return d.close; }));
+        
+
+           d3.select('.line')
+               .datum(chartData)
+               .attr("d", line);
+            
+          var focus = svg.append("g")
+              .attr("class", "focus")
+              .style("display", "none");
+
+          focus.append("text")
+              .attr("x", 1)
+              .attr("dy", ".35em");
+
+          svg.append("rect")
+              .attr("class", "overlay")
+              .attr("width", width)
+              .attr("height", height)
+              .on("mouseover", function() { focus.style("display", null); })
+              .on("mouseout", function() { focus.style("display", "none"); })
+//                  .on("mousemove", mousemove);
+
+//              function mousemove() {
+//                var x0 = x.invert(d3.mouse(this)[0]),
+//                    i = bisectDate(data, x0, 1),
+//                    d0 = data[i - 1],
+//                    d1 = data[i],
+//                    d = x0 - d0.date > d1.date - x0 ? d1 : d0;
+//                focus.attr("transform", "translate(" + x(d.date) + "," + y(d.close) + ")");
+//                focus.select("text").text(formatCurrency(d.close));
+//              }
+
+
+    } // end drawChart()
+
+
+
+    
+})();
+
+</script>
 </body>
 </html>
