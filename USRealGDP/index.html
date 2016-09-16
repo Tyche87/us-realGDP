@@ -219,8 +219,6 @@
     
     <div id="ui-slider">
         <input type="range" min="2001" max="2013" value="2001" step="1" class="slider">
-        
-
     </div>
     
     <div id ='ui-data'>
@@ -257,7 +255,7 @@
     </div>
 
     
-    </div>
+</div>  <!-- end side panel -->
     
     
     
@@ -311,32 +309,32 @@
 
    
 
-    <script>
-        L.mapbox.accessToken = 'pk.eyJ1Ijoicmdkb25vaHVlIiwiYSI6Im5Ua3F4UzgifQ.PClcVzU5OUj17kuxqsY_Dg';
+<script>
 
-        var map = L.mapbox.map('map', 'mapbox.light', {
-            center: [35.82, -97.58],
-            zoom: 4,
-            minZoom: 3,
-            maxZoom: 9,
-           
+(function() {
+    
+    
+    L.mapbox.accessToken = 'pk.eyJ1Ijoicmdkb25vaHVlIiwiYSI6Im5Ua3F4UzgifQ.PClcVzU5OUj17kuxqsY_Dg';
+
+    var map = L.mapbox.map('map', 'mapbox.light', {
+        center: [35.82, -97.58],
+        zoom: 4,
+        minZoom: 3,
+        maxZoom: 9,
+
+    });
+
+
+    var metroCentroids = omnivore.csv('realGDP_metro_2001-2013a.csv')
+        .on('ready',function(e) {
+            drawMap(e.target.toGeoJSON())
+        })
+        .on('error', function(e) {
+            console.log(e.error[0].message)
         });
 
-        
-        var metroCentroids = omnivore.csv('realGDP_metro_2001-2013a.csv')
-            .on('ready',function(e) {
-                drawMap(e.target.toGeoJSON())
-            })
-            .on('error', function(e) {
-                console.log(e.error[0].message)
-            });
-        
-       
-        // global vars         
-        var currentYear = 2001,
-            data,
-            sectorData = 'AG_';
 
+<<<<<<< HEAD
         function drawMap(gdpData){
             
              data = L.geoJson(gdpData, {
@@ -412,11 +410,177 @@
                 
             });
             
+=======
+    // global vars for chart      
+    var currentYear = 2001,
+        data,
+        sectorData = 'AG_';
+
+    var margin = {top: 20, right: 100, bottom: 35, left: 75},
+        width = 960 - margin.left - margin.right,
+        height = 175 - margin.top - margin.bottom;
+
+    var bisectDate = d3.bisector(function(d) { return d.date; }).left,
+        formatValue = d3.format(",.2f"),
+        formatCurrency = function(d) { return "$" + formatValue(d); };     
+
+    var x = d3.scale.linear()
+        .range([0, width])
+
+    var y = d3.scale.linear()
+        .range([height, 0]);
+
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient("bottom");
+
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient("left").ticks(5);
+
+    var line = d3.svg.line()
+        .x(function(d) { return x(d.date); })
+        .y(function(d) { return y(d.close); })
+        .interpolate("basis");
+
+    var svg = d3.select("#chart").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+    svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+      .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 15)
+      .attr("dy", ".35em")
+      .style("text-anchor", "end")
+      .text("GDP (MM$)");
+    
+    // create reference to line for updating later in updateChart
+    var path = svg.append("path").attr('class', 'line');
+
+    function drawMap(gdpData){
+
+         data = L.geoJson(gdpData, {
+            pointToLayer: function(feature, layer){
+                return L.circleMarker(layer, {
+                    color: '#8C029A',
+                    opacity: .8,
+                    weight: 1,
+                    fillOpacity: 0,
+                  //radius: calcRadius(Number(feature.properties.AG_2001))
+                });
+
+            },
+             onEachFeature(feature, layer) {
+
+                 layer.on('mouseover', function() {
+
+                     var layerData = getChartData(feature);
+                     updateChart(layerData);
+
+                 });
+
+             }
+
+        }).addTo(map);
+        
+
+//         total = L.geoJson(gdpData, {
+//            pointToLayer: function(feature, layer){
+//                return L.circleMarker(layer, {
+//                    color: '#FF0000',
+//                    opacity: .8,
+//                    weight: 1,
+//                    fillOpacity: 0,
+//                    radius: calcRadius(Number(feature.properties.TOT_2001))
+//                });
+//                
+//            }
+//             
+//        }).addTo(map);            
+
+        addUiListeners();
+        updateSymbols();
+  
+
+    }
+
+    function addUiListeners(){
+
+        // listen for changes to the temperal slider
+        $('.slider')
+            .on('input change', function() {
+                currentYear = $(this).val();
+                updateSymbols();
+                $('#year span').html(currentYear);
+        });
+
+
+        // listen for changes to the dropdown attribute selector
+        $('select[id="sector"]').change(function(){
+            sectorData = $(this).val();
+            updateSymbols(sectorData);
+
+        });            
+
+    };        
+
+
+    function updateSymbols() {
+
+
+        var allRadii = [];
+
+        data.eachLayer(function(layer) {
+            var props = layer.feature.properties;
+            var percent = Number(props[sectorData + currentYear]/props['TOT_'+currentYear])*100;
+            var realGDP = Number(props[sectorData + currentYear])
+            var radius = calcRadius(realGDP);
+            layer.setRadius(radius);
+            allRadii.push(radius);
+            //console.log(props.metro +' '+ realGDP)
+
+        });
+
+>>>>>>> patch-d3-chart
 //            total.eachLayer(function(layer) {
 //                radius = (calcRadius(Number(layer.feature.properties['TOT_'+currentYear])))
 //                layer.setRadius(radius)
 //                allRadii.push(radius)
 //            });
+
+        //drawLegend(allRadii);  
+
+
+    }
+
+   function calcRadius(val) {
+
+        var radius = Math.sqrt(val/Math.PI);
+        return radius * .6;
+
+    }
+
+
+
+    function getChartData(feature) {
+
+            var props = feature.properties;
+          
+            var chartData = [];
+
+            for(var i = 2001; i <= 2013; i++) {
+                chartData.push([i, Number(props["TOT_" + i])]);
+
             
             //drawLegend(allRadii);        
         }
@@ -429,6 +593,37 @@
         }
         
         
+//        function drawLegend(allRadii){
+//            var legend =$('.legend')
+//            var circles = {
+//                max: ss.max(allRadii),
+//                median: ss.median(allRadii),
+//                min: ss.min(allRadii),
+//                
+//            }
+//            
+//           // console.log(circles)
+//            
+//            var svgCircle = '';
+//            
+//            var reverseCalc = function(radius) {
+//                
+//                return Math.round(Math.pow(radius/.6, 2) * Math.PI)
+//                
+//            }
+//                
+//            for (var circle in circles) {
+//                var radiusValue = circles[circle];
+//                
+//                var actualValue = reverseCalc(radiusValue);
+//                
+//                svgCircle += '<circle cx="50%" cy="' + (radiusValue -180) * -1 + '" r="' + radiusValue + '" stroke = "#DEDEDE" stroke-width="2" fill="rgba(140, 2, 154, 0.30)" />';
+//                
+//                svgCircle += '<text x="'+ 85 +'" y = "'+ (radiusValue -160) * -1 + '" fill="#222222">'+ actualValue +'</text>'
+//            }
+//            
+//            legend.html(svgCircle);
+//        }
         
         function infoWindow() {
             var info = $('#info');
@@ -443,6 +638,7 @@
                 var displayGDP = Number(props[sectorData + currentYear]);
                 $('#info span').text(displayMetro+' '+currentYear);
                 $('.sectorData span').text((displayGDP*1000000).toLocaleString());
+<<<<<<< HEAD
 <<<<<<< HEAD
                 $('.percentTotal span').text((displayGDP/props["TOT_" + currentYear]*100).toLocaleString())
 =======
@@ -471,6 +667,41 @@
                 
                 
                 //Show Total GDP for all years
+=======
+                
+                e.layer.setStyle({ fillOpacity: .6 });
+                
+//                var yData = [                
+//                        Number(props.TOT_2001), 
+//                        Number(props.TOT_2002), 
+//                        Number(props.TOT_2003), 
+//                        Number(props.TOT_2004), 
+//                        Number(props.TOT_2005),
+//                        Number(props.TOT_2006),
+//                        Number(props.TOT_2007),
+//                        Number(props.TOT_2008),
+//                        Number(props.TOT_2009),
+//                        Number(props.TOT_2010), 
+//                        Number(props.TOT_2011),
+//                        Number(props.TOT_2012),
+//                        Number(props.TOT_2013)];
+//            
+//                var xData = [
+//                        2001,
+//                        2002, 
+//                        2003,
+//                        2004,
+//                        2005,
+//                        2006,
+//                        2007,
+//                        2008,
+//                        2009,
+//                        2010,
+//                        2011,
+//                        2012,
+//                        2013];
+//                
+>>>>>>> patch-d3-chart
 //                var chartData = [                 
 //                        [2001, Number(props.TOT_2001)], 
 //                        [2002, Number(props.TOT_2002)], 
@@ -485,46 +716,48 @@
 //                        [2011, Number(props.TOT_2011)],
 //                        [2012, Number(props.TOT_2012)],
 //                        [2013, Number(props.TOT_2013)]];
-                
-//                $('.metroTotal span').text( 
-//                        "2001: $"+ (props["TOT_2001"]*1000000).toLocaleString() +
-//                        ", 2002: $"+ (props["TOT_2002"]*1000000).toLocaleString() +
-//                        ", 2003: $"+ (props["TOT_2003"]*1000000).toLocaleString() +
-//                        ", 2004: $"+ (props["TOT_2004"]*1000000).toLocaleString() +
-//                        ", 2005: $"+ (props["TOT_2005"]*1000000).toLocaleString() +
-//                        ", 2006: $"+ (props["TOT_2006"]*1000000).toLocaleString() +
-//                        ", 2007: $"+ (props["TOT_2007"]*1000000).toLocaleString() +
-//                        ", 2008: $"+ (props["TOT_2008"]*1000000).toLocaleString() +
-//                        ", 2009: $"+ (props["TOT_2009"]*1000000).toLocaleString() +
-//                        ", 2010: $"+ (props["TOT_2010"]*1000000).toLocaleString() +
-//                        ", 2011: $"+ (props["TOT_2011"]*1000000).toLocaleString() +
-//                        ", 2012: $"+ (props["TOT_2012"]*1000000).toLocaleString() +
-//                        ", 2013: $"+ (props["TOT_2013"]*1000000).toLocaleString() );
+//                
+                $('.metroTotal span').text( 
+                        "2001: $"+ (props["TOT_2001"]*1000000).toLocaleString() +
+                        ", 2002: $"+ (props["TOT_2002"]*1000000).toLocaleString() +
+                        ", 2003: $"+ (props["TOT_2003"]*1000000).toLocaleString() +
+                        ", 2004: $"+ (props["TOT_2004"]*1000000).toLocaleString() +
+                        ", 2005: $"+ (props["TOT_2005"]*1000000).toLocaleString() +
+                        ", 2006: $"+ (props["TOT_2006"]*1000000).toLocaleString() +
+                        ", 2007: $"+ (props["TOT_2007"]*1000000).toLocaleString() +
+                        ", 2008: $"+ (props["TOT_2008"]*1000000).toLocaleString() +
+                        ", 2009: $"+ (props["TOT_2009"]*1000000).toLocaleString() +
+                        ", 2010: $"+ (props["TOT_2010"]*1000000).toLocaleString() +
+                        ", 2011: $"+ (props["TOT_2011"]*1000000).toLocaleString() +
+                        ", 2012: $"+ (props["TOT_2012"]*1000000).toLocaleString() +
+                        ", 2013: $"+ (props["TOT_2013"]*1000000).toLocaleString() );
                         
         
+                updateInfo(xData, yData)
+                       
                 
-                drawChart(chartData)       
-
-            
-        });
-            
+            });
+                    
             data.on('mouseout', function(e){
                
-                //info.hide()
                 e.layer.setStyle({ fillOpacity: 0});
                 
-            })
+            });
             
         }
-        
-        //function updateInfo(){}
-        
-        //D3 line Chart
-        function drawChart(chartData){  
+            function updateInfo(){
+                
 
+            }
 
-            var arrData = chartData;
+            // convert city data   
+            var chartData = chartData.map(function(d) {
+                  return {
+                     date: d[0],
+                     close: d[1]
+                  };
 
+<<<<<<< HEAD
                  console.log(arrData[0])
 
             var margin = {top: 20, right: 140, bottom: 35, left: 75},
@@ -534,103 +767,61 @@
             var bisectDate = d3.bisector(function(d) { return d.date; }).left,
                 formatValue = d3.format(",.2f"),
                 formatCurrency = function(d) { return "$" + formatValue(d); };     
-
-
-            var x = d3.scale.linear()
-                .range([0, width])
-
-            var y = d3.scale.linear()
-                .range([height, 0]);
-
-            var xAxis = d3.svg.axis()
-                .scale(x)
-                .orient("bottom");
-
-            var yAxis = d3.svg.axis()
-                .scale(y)
-                .orient("left").ticks(5);
-
-            var line = d3.svg.line()
-                .x(function(d) { return x(d.date); })
-                .y(function(d) { return y(d.close); })
-                .interpolate("basis");
-                
-
-            var svg = d3.select("#chart").append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-              .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-            var data = arrData.map(function(d) {
-                  return {
-                     date: d[0],
-                     close: d[1]
-                  };
-
+=======
               });
 
+            return chartData;       
+>>>>>>> patch-d3-chart
 
-              x.domain(d3.extent(data, function(d) { return d.date; }));
-              y.domain(d3.extent(data, function(d) { return d.close; }));
+    }
 
-              svg.append("g")
-                  .attr("class", "x axis")
-                  .attr("transform", "translate(0," + height + ")")
-                  .call(xAxis);
+    //function updateInfo(){}
 
-              svg.append("g")
-                  .attr("class", "y axis")
-                  .call(yAxis)
-                .append("text")
-                  .attr("transform", "rotate(-90)")
-                  .attr("y", 15)
-                  .attr("dy", ".35em")
-                  .style("text-anchor", "end")
-                  .text("GDP (MM$)");
+    //D3 line Chart
+    function updateChart(chartData){  
 
-              svg.append("path")
-                  .datum(data)
-                  .attr("class", "line")
-                  .attr("d", line);
-                 
-            
-            
-              var focus = svg.append("g")
-                  .attr("class", "focus")
-                  .style("display", "none");
-
-
-
-              focus.append("text")
-                  .attr("x", 1)
-                  .attr("dy", ".35em");
-
-              svg.append("rect")
-                  .attr("class", "overlay")
-                  .attr("width", width)
-                  .attr("height", height)
-                  .on("mouseover", function() { focus.style("display", null); })
-                  .on("mouseout", function() { focus.style("display", "none"); })
-                  .on("mousemove", mousemove);
-
-              function mousemove() {
-                var x0 = x.invert(d3.mouse(this)[0]),
-                    i = bisectDate(data, x0, 1),
-                    d0 = data[i - 1],
-                    d1 = data[i],
-                    d = x0 - d0.date > d1.date - x0 ? d1 : d0;
-                focus.attr("transform", "translate(" + x(d.date) + "," + y(d.close) + ")");
-                focus.select("text").text(formatCurrency(d.close));
-              }
-     
-
-             }
-
-            
+           x.domain(d3.extent(chartData, function(d) { return d.date; }));
+           y.domain(d3.extent(chartData, function(d) { return d.close; }));
         
-    
 
-    </script>
+           d3.select('.line')
+               .datum(chartData)
+               .attr("d", line);
+            
+          var focus = svg.append("g")
+              .attr("class", "focus")
+              .style("display", "none");
+
+          focus.append("text")
+              .attr("x", 1)
+              .attr("dy", ".35em");
+
+          svg.append("rect")
+              .attr("class", "overlay")
+              .attr("width", width)
+              .attr("height", height)
+              .on("mouseover", function() { focus.style("display", null); })
+              .on("mouseout", function() { focus.style("display", "none"); })
+//                  .on("mousemove", mousemove);
+
+//              function mousemove() {
+//                var x0 = x.invert(d3.mouse(this)[0]),
+//                    i = bisectDate(data, x0, 1),
+//                    d0 = data[i - 1],
+//                    d1 = data[i],
+//                    d = x0 - d0.date > d1.date - x0 ? d1 : d0;
+//                focus.attr("transform", "translate(" + x(d.date) + "," + y(d.close) + ")");
+//                focus.select("text").text(formatCurrency(d.close));
+//              }
+
+
+    } // end drawChart()
+
+
+
+    
+})();
+
+</script>
 </body>
 </html>
