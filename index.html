@@ -32,41 +32,34 @@
         }
         
         h1{
-            padding: 8px 55px 8px 15px;
+            padding: 2%;
             margin: 0;
-            background: orange;
+            background: #8C029A;
             color: whitesmoke;
-            font-weight: 400;
+            font-weight: 200;
             font-size: 1.5em;
             text-align: center;
             box-shadow:  0 0 15px rgba(0,0,0,0.2);
         }
         h2 {
-            margin: 0px;
-            padding: 8px 25px 8px 25px;
+            padding: 0% 0% 0% 3%;
+            margin: 0% 0% 0% 0%;
             color: #3d3d3d;
             font-weight: 500;
-            font-size: 1.1em;
-            text-align: justify;
+            font-size: 1em;
+            text-align: left;
         }
 
         #side-panel p {
-            margin: 10px 10px 0px 10px; 
-            padding: 0 25px 0 15px;
+            padding: 0px 15px 0 15px;
             color: #3d3d3d;
             text-align: justify;
-            font-size: 1em;
-            clear: both
+            font-size: .9em;
+            clear: left;
         }
         #side-panel p:after {
             content: '';
             display: block;
-            
-            
-        }
-        #side-panel img {
-            position: absolute;
-            margin: 80% -10%;
         }
         #map {
             position:absolute;
@@ -75,28 +68,27 @@
             right: 0;
             width: 67%;
         }
-
-        #ui-slider {
-            position: absolute;
-            top: 235px;
-            right: 20px;
-            width: 320px;
-            padding: 8px 15px 4px;
-            background: rgba(90, 90, 90, 0.30);
-            border: 2px solid #d3d3d3;
-            border-radius: ;
-            color: whitesmoke;
-            box-shadow:  0 0 15px rgba(0,0,0,0.2);
-        }
  
+/*
         #filter{
+            position: absolute;
+            left: 0%;
+            bottom: 5%;
+            right: 4%;
+            left: 3%;
             width: 100%;
+            color: #000;
         }
+        .slider2 {
+            margin: 0% 0% 3% 0%;
+            width: 50%; 
+        }
+*/
 
         #year{
             position: absolute;
-            bottom: 57%;
-            left:67%;
+            bottom: 59%;
+            left:70%;
             color: whitesmoke;
             font-weight: 200;
             font-size: 1.5em;
@@ -106,95 +98,76 @@
         #ui-data{
             position: absolute;
             bottom: 5%;
-            left: 10px;
-            width: 48%;
-            padding: 20px 200px 15px 20px;
-            background: rgba(90, 90, 90, 0.30);
-            border: 2px solid orange;
-            border-radius: ;
-            color: orange;
+            right: 4%;
+            left: 3%;
+            width: 94%;
+            color: #000;
                
         }
-        .slider {
-            padding: 10px 0px 10px;
-            width: 115%; 
+        #ui-data > label {
+            color: #8C029A;
         }
         
-        #chart-container {
-            padding: 0px 180px 0px 0px; 
+        #ui-data2>label {
+            color: #056F8D;
+        }
+    
+        .slider {
+            margin: 3% 0% 3% 0%;
+            width: 55%; 
+        }
+        
+        
+        #chart-container { 
             bottom: 0%;
             height: 175px;
             background-color: #d1d1d1;
-            border: 2px solid #d3d3d3;
+            background-color:rgba(90, 90, 90, 0.30);
             box-shadow:  0 0 15px rgba(0,0,0,0.2);
             font-size: 1em;
             color: #000;
             
         }
-/*
-        #chart-container {
-            position: absolute;
-            right: .5%;
-            bottom: 0%;
-            height: 175px;
-            background: rgba(90, 90, 90, 0.30);
-            border: 2px solid #d3d3d3;
-            box-shadow:  0 0 15px rgba(0,0,0,0.2);
-            font-size: 1em;
-            color: #000;
-        }
-*/
-        .chart{
-            position: absolute;
-            width: 100%;
-            right: .5%;
-            bottom: 25px;
-            padding: 0px 150px 0px 150px;
-   
-        }
+
         #info {
             position: absolute;
-            right: .5%;
-            bottom: 10%;
-            height: 70px;
-            width: 63%;
+            left: 10px;
+            right: 1px;
+            bottom: 50%; 
+            height: 12%;
+            width: 95%;
             font-size: 1em;
-            border: 2px solid #d3d3d3;
-            background-color: rgba(90, 90, 90, 0.50);
+            background-color: rgba(90, 90, 90, 0.30);
             box-shadow:  0 0 15px rgba(0,0,0,0.2);
             
         }
         
         #info p{
-            margin: 3px 10px 4px;
+            padding: 3px 0px 0px 10px;
+            margin: 3px 0px 1px 15px;
             float: left;
+            color: whitesmoke;
             
         }
         
         .axis path,
         .axis line {
           fill: none;
-          stroke: #000;
+          stroke: whitesmoke;
           shape-rendering: crispEdges;
               
         }
 
         .x.axis path {
-          display: none;
+          display: ;
             font-size: .6em;
         }
 
         .line {
           fill: none;
-          stroke: #8C029A;
+          stroke: whitesmoke;
           stroke-width: 2;
         } 
-        
-        .labels{
-          fill: none;
-          stroke: orange;
-          stroke-width: 2px;        
-        }
         
         .overlay {
           fill: none;
@@ -207,9 +180,6 @@
         }
         
         
-        
-       
-        
     </style>
 </head>
 <body>
@@ -218,12 +188,15 @@
     <h1>US Economies 2001 - 2013</h1>
     <h2>What makes up local economies across the country?</h2>
     <h2><br>About this map:</h2>
-    <p>Compare metropolitan Gross Domestic Product values across the US, and by main industry sectors using the data selector. Use the date slider to see positive or negative growth over the years 2001 to 2013. Dollar values are represented in billions, 'chained' to 2009 values for relative comparability. All GDP data is sourced from the Bureau of Economic Analysis: <a href="https://www.bea.gov">See or Browse Data</a></p>
+    <p>Compare metropolitan Gross Domestic Product values across the US, and by industry sectors using the data selector. Use the date slider to see positive or negative growth over the years 2001 to 2013. Dollar values are represented in 2009 values for relative comparability. All GDP data is sourced from the Bureau of Economic Analysis: <a href="https://www.bea.gov">See or Browse Data</a></p>
 
- 
+     <div id='info'>
+            <p><span></span></p>
+            <p class='sectorData'>Sector GDP: $<span>0.00</span></p>
+            <p class='percentTotal'>Sector % of Total GDP: <span>0.0</span>%</p></div>
     
     <div id ='ui-data'>
-        <label>Select Industry Sector:</label>
+        <label>Select Industry Sector: </label>
         <select id = "sector"> 
             <option value="AG_" selected>Agriculture, forestry, fishing, and hunting</option>
             <option value="ENT_" >Arts, entertainment, recreation, accommodation, and food services</option>
@@ -242,7 +215,8 @@
             <option value="NAT_" >Natural Resources and Mining</option>
             <option value="TOT_" >Total Annual Local Contribution to Real GDP</option>
         </select>
-                <label> Select Comparable Sector:</label>
+    <div id ='ui-data2'>    
+        <label> Select Comparable Sector:</label>
         <select id = "sector2"> 
             <option value="AG_" >Agriculture, forestry, fishing, and hunting</option>
             <option value="ENT_" selected>Arts, entertainment, recreation, accommodation, and food services</option>
@@ -260,7 +234,7 @@
             <option value="GOV_" >Government</option>
             <option value="NAT_" >Natural Resources and Mining</option>
             <option value="000" >No Comparison</option>
-        </select>
+    </select></div>
     
         <input class="slider" type="range" min="2001" max="2013" value="2001" step="1" >
         <div id="year">Year: <span>2001</span></div>
@@ -269,7 +243,7 @@
         <div id='chart-container'  style="width: 100%; height:170px">
            
 
-        <svg id='chart' style="width: 183%; height:170px"></svg></div>
+        <svg id='chart' style="width: 100%; height:170px"></svg></div>
         
 <!--
         <label> Choose a Metropolitan Area:</label>
@@ -288,14 +262,14 @@
     
     
     
-    <div id='map'> </div>   
-        
+<div id='map'></div>
+<!--
+    <div id="filter">
+            <input class="slider2" type="range" min="100" max="1000" value="100" step="1" ></div>
+-->
 <!--     <p class='percentTotal'>Percent of Total GDP: <span></span></p>-->
     
-    <div id='info'>
-            <p><span></span></p>
-            <p class='sectorData'>Sector GDP: $<span>0.00</span></p>
-            <p class='percentTotal'>Sector % of Total GDP: <span>0.0</span>%</p></div>
+
 
 
 
@@ -327,12 +301,19 @@
     
     
     L.mapbox.accessToken = 'pk.eyJ1Ijoicmdkb25vaHVlIiwiYSI6Im5Ua3F4UzgifQ.PClcVzU5OUj17kuxqsY_Dg';
+    
+    var bounds = [
+    [-10.706684, -198.921405], // Southwest coordinates
+    [72.156477, -56.407536]  // Northeast coordinates
+    ];
 
     var map = L.mapbox.map('map', 'mapbox.light', {
         center: [35.82, -97.58],
         zoom: 4,
         minZoom: 3,
         maxZoom: 9,
+        maxBounds: bounds 
+        
 
     });
 
@@ -369,10 +350,12 @@
     var xAxis = d3.svg.axis()
         .scale(x)
         .orient("bottom");
+    
 
     var yAxis = d3.svg.axis()
         .scale(y)
         .orient("left").ticks(5);
+        
 
     var line = d3.svg.line()
         .x(function(d) { return x(d.date); })
@@ -389,6 +372,7 @@
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
       .call(xAxis);
+      
 
     svg.append("g")
       .attr("class", "y axis")
@@ -398,13 +382,13 @@
       .attr("y", 15)
       .attr("dy", ".35em")
       .style("text-anchor", "end")
-      .text("GDP (MM$)");
+      .text("GDP");
     
     // create reference to line for updating later in updateChart
     var path = svg.append("path").attr('class', 'line');
 
     function drawMap(gdpData){
-
+        
          data = L.geoJson(gdpData, {
             pointToLayer: function(feature, layer){
                 return L.circleMarker(layer, {
@@ -412,7 +396,7 @@
                     opacity: .8,
                     weight: 1,
                     fillOpacity: 0,
-                  //radius: calcRadius(Number(feature.properties.AG_2001))
+                  
                 });
                 
             },
@@ -424,6 +408,13 @@
                      updateChart(layerData);
 
                  });
+                 
+                                         layer.on('click', function(e) {
+                    var clickPoint = e.layer.getLatLng();
+                    map.panTo(clickPoint)
+                    
+                });
+                  
              }
             
          }).addTo(map);
@@ -431,15 +422,16 @@
                 
          data2 = L.geoJson(gdpData, {
                 pointToLayer: function(feature, layer){
-                return L.circleMarker(layer, {
-                    color: '#056F8D',
-                    opacity: .8,
-                    weight: .5,
-                    fillOpacity: 0,
-                    //radius: calcRadius(Number(feature.properties.AG_2001))
-                });
+                    return L.circleMarker(layer, {
+                        color: '#056F8D',
+                        opacity: 1,
+                        weight: .5,
+                        fillOpacity: 0,
+        
+                    });
                 },
-                         onEachFeature(feature, layer) {
+             
+                onEachFeature(feature, layer) {
 
                 layer.on('mouseover', function() {
 
@@ -447,29 +439,15 @@
                      updateChart(layerData);
 
                  });
-            }
-        }).addTo(map)
-            
+              }
              
-        
-        
+             
+        }).addTo(map)
+                       
 
-//         total = L.geoJson(gdpData, {
-//            pointToLayer: function(feature, layer){
-//                return L.circleMarker(layer, {
-//                    color: '#FF0000',
-//                    opacity: .8,
-//                    weight: 1,
-//                    fillOpacity: 0,
-//                    radius: calcRadius(Number(feature.properties.TOT_2001))
-//                });
-//                
-//            }
-//             
-//        }).addTo(map);            
-
-        addUiListeners();
-        updateSymbols();
+     
+            addUiListeners();
+            updateSymbols();
         
   
 
@@ -484,6 +462,13 @@
                 updateSymbols(currentYear);
                 $('#year span').html(currentYear);
         });
+           
+        $('.slider2')
+            .on('input change', function() {
+                gdpValue = $(this).val()
+                filter(gdpValue)
+        });
+        
 
 
         // listen for changes to the dropdown attribute selector
@@ -501,6 +486,8 @@
         });
         
         
+        
+      
 
     };        
 
@@ -541,8 +528,26 @@
 //                layer.setRadius(radius)
 //                allRadii.push(radius)
 //            });
+        
+                //Filter cities by total GDP   
+        
+//        function filter() {
+//            
+//            
+//            
+//            var props = feature.properties;
+//            
+//            var min = min.props["TOT_2013"]
+//            var max = min.props["TOT_2013"] 
+//
+//            var props = feature.properties;
+//          
+//            var Data = [];
+//
+//            for(var i = TOT_2013.min; i <= TOT_2013.max; i++) {
+//                filterData.push([i, Number(props["TOT_" + i])]);
+//            }
 
-        //drawLegend(allRadii);  
 
 
     }
@@ -563,9 +568,9 @@
 
             for(var i = 2001; i <= 2013; i++) {
                 chartData.push([i, Number(props["TOT_" + i])]);
-            }
-            
-            //drawLegend(allRadii);        
+            }       
+        
+        infoWindow();
 
         
        function calcRadius(val) {
@@ -576,39 +581,6 @@
         }
         
         
-//        function drawLegend(allRadii){
-//            var legend =$('.legend')
-//            var circles = {
-//                max: ss.max(allRadii),
-//                median: ss.median(allRadii),
-//                min: ss.min(allRadii),
-//                
-//            }
-//            
-//           // console.log(circles)
-//            
-//            var svgCircle = '';
-//            
-//            var reverseCalc = function(radius) {
-//                
-//                return Math.round(Math.pow(radius/.6, 2) * Math.PI)
-//                
-//            }
-//                
-//            for (var circle in circles) {
-//                var radiusValue = circles[circle];
-//                
-//                var actualValue = reverseCalc(radiusValue);
-//                
-//                svgCircle += '<circle cx="50%" cy="' + (radiusValue -180) * -1 + '" r="' + radiusValue + '" stroke = "#DEDEDE" stroke-width="2" fill="rgba(140, 2, 154, 0.30)" />';
-//                
-//                svgCircle += '<text x="'+ 85 +'" y = "'+ (radiusValue -160) * -1 + '" fill="#222222">'+ actualValue +'</text>'
-//            }
-//            
-//            legend.html(svgCircle);
-//        }
-        
-        infoWindow();
         
         function infoWindow() {
             var info = $('#info');
@@ -621,75 +593,12 @@
                 var props = e.layer.feature.properties;
                 var displayMetro = props.metro;
                 var displayGDP = Number(props[sectorData + currentYear]);
-                $('#info span').text(displayMetro+' '+currentYear);
+                $('#info span').text(displayMetro);
                 $('.sectorData span').text((displayGDP*1000000).toLocaleString());
                 $('.percentTotal span').text((displayGDP/props["TOT_" + currentYear]*100).toLocaleString());
                 
                 
                 e.layer.setStyle({ fillOpacity: .6 });
-                
-//                var yData = [                
-//                        Number(props.TOT_2001), 
-//                        Number(props.TOT_2002), 
-//                        Number(props.TOT_2003), 
-//                        Number(props.TOT_2004), 
-//                        Number(props.TOT_2005),
-//                        Number(props.TOT_2006),
-//                        Number(props.TOT_2007),
-//                        Number(props.TOT_2008),
-//                        Number(props.TOT_2009),
-//                        Number(props.TOT_2010), 
-//                        Number(props.TOT_2011),
-//                        Number(props.TOT_2012),
-//                        Number(props.TOT_2013)];
-//            
-//                var xData = [
-//                        2001,
-//                        2002, 
-//                        2003,
-//                        2004,
-//                        2005,
-//                        2006,
-//                        2007,
-//                        2008,
-//                        2009,
-//                        2010,
-//                        2011,
-//                        2012,
-//                        2013];
-//                
-//                var chartData = [                 
-//                        [2001, Number(props.TOT_2001)], 
-//                        [2002, Number(props.TOT_2002)], 
-//                        [2003, Number(props.TOT_2003)],
-//                        [2004, Number(props.TOT_2004)],
-//                        [2005, Number(props.TOT_2005)],
-//                        [2006, Number(props.TOT_2006)],
-//                        [2007, Number(props.TOT_2007)],
-//                        [2008, Number(props.TOT_2008)],
-//                        [2009, Number(props.TOT_2009)],
-//                        [2010, Number(props.TOT_2010)], 
-//                        [2011, Number(props.TOT_2011)],
-//                        [2012, Number(props.TOT_2012)],
-//                        [2013, Number(props.TOT_2013)]];
-//                
-                $('.metroTotal span').text( 
-                        "2001: $"+ (props["TOT_2001"]*1000000).toLocaleString() +
-                        ", 2002: $"+ (props["TOT_2002"]*1000000).toLocaleString() +
-                        ", 2003: $"+ (props["TOT_2003"]*1000000).toLocaleString() +
-                        ", 2004: $"+ (props["TOT_2004"]*1000000).toLocaleString() +
-                        ", 2005: $"+ (props["TOT_2005"]*1000000).toLocaleString() +
-                        ", 2006: $"+ (props["TOT_2006"]*1000000).toLocaleString() +
-                        ", 2007: $"+ (props["TOT_2007"]*1000000).toLocaleString() +
-                        ", 2008: $"+ (props["TOT_2008"]*1000000).toLocaleString() +
-                        ", 2009: $"+ (props["TOT_2009"]*1000000).toLocaleString() +
-                        ", 2010: $"+ (props["TOT_2010"]*1000000).toLocaleString() +
-                        ", 2011: $"+ (props["TOT_2011"]*1000000).toLocaleString() +
-                        ", 2012: $"+ (props["TOT_2012"]*1000000).toLocaleString() +
-                        ", 2013: $"+ (props["TOT_2013"]*1000000).toLocaleString() );
-                        
-        
-                //updateInfo(xData, yData)
                        
                 
             });
@@ -699,6 +608,30 @@
                 e.layer.setStyle({ fillOpacity: 0});
                 
             });
+            
+            data2.on('mouseover', function(e){
+                
+
+                info.show()
+                
+                var props = e.layer.feature.properties;
+                var displayMetro = props.metro;
+                var displayGDP = Number(props[sectorData2 + currentYear]);
+                $('#info span').text(displayMetro);
+                $('.sectorData span').text((displayGDP*1000000).toLocaleString());
+                $('.percentTotal span').text((displayGDP/props["TOT_" + currentYear]*100).toLocaleString());
+                
+                
+                e.layer.setStyle({ fillOpacity: .6 });
+                       
+                
+            });
+            
+             data2.on('mouseout', function(e){
+               
+                e.layer.setStyle({ fillOpacity: 0});
+                
+            });    
             
         }
             function updateInfo(){
@@ -719,7 +652,7 @@
 
     }
 
-    //function updateInfo(){}
+    
 
     //D3 line Chart
     function updateChart(chartData){  
@@ -747,8 +680,8 @@
               .on("mouseover", function() { focus.style("display", null); })
               .on("mouseout", function() { focus.style("display", "none"); })
 //                  .on("mousemove", mousemove);
-
-//              function mousemove() {
+//
+//              function mousemove(chartData) {
 //                var x0 = x.invert(d3.mouse(this)[0]),
 //                    i = bisectDate(data, x0, 1),
 //                    d0 = data[i - 1],
