@@ -124,7 +124,7 @@
             background-color: #d1d1d1;
             background-color:rgba(90, 90, 90, 0.30);
             box-shadow:  0 0 15px rgba(0,0,0,0.2);
-            font-size: 1em;
+            font-size: .5em;
             color: #000;
             
         }
@@ -340,18 +340,21 @@
         height = 175 - margin.top - margin.bottom;
 
     var bisectDate = d3.bisector(function(d) { return d.date; }).left,
-        formatValue = d3.format(",.2f"),
-        formatCurrency = function(d) { return "$" + formatValue(d); };     
+        formatValue = d3.format(" "),
+        formatCurrency = function(d) { return "$" + formatValue(d); };
+    
 
     var x = d3.scale.linear()
+        .domain([2001, 2013])
         .range([0, width])
+        
 
     var y = d3.scale.linear()
         .range([height, 0]);
 
     var xAxis = d3.svg.axis()
         .scale(x)
-        .orient("bottom");
+        .orient("bottom")
     
 
     var yAxis = d3.svg.axis()
