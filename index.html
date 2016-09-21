@@ -214,7 +214,7 @@
             <option value="WHO_" >Wholesale Trade</option>
             <option value="GOV_" >Government</option>
             <option value="NAT_" >Natural Resources and Mining</option>
-            <option value="TOT_" >Total Annual Local Contribution to Real GDP</option>
+            <option value="000" >No Comparison</option>
         </select>
     <div id ='ui-data2'>    
         <label> Select Comparable Sector:</label>
@@ -234,7 +234,7 @@
             <option value="WHO_" >Wholesale Trade</option>
             <option value="GOV_" >Government</option>
             <option value="NAT_" >Natural Resources and Mining</option>
-            <option value="000" >No Comparison</option>
+            <option value="TOT_" >Total Annual Local Contribution to Real GDP</option>
     </select></div>
     
         <input class="slider" type="range" min="2001" max="2013" value="2001" step="1" >
@@ -306,7 +306,7 @@
     
     var bounds = [
     [-10.706684, -198.921405], // Southwest coordinates
-    [72.156477, -56.407536]  // Northeast coordinates
+    [72.156477, -46.407536]  // Northeast coordinates
     ];
 
     var map = L.mapbox.map('map', 'mapbox.light', {
@@ -318,7 +318,7 @@
         
 
     });
-
+    
 
     var metroCentroids = omnivore.csv('realGDP_metro_2001-2013a.csv')
         .on('ready',function(e) {
@@ -395,8 +395,8 @@
             pointToLayer: function(feature, layer){
                 return L.circleMarker(layer, {
                     color: '#8C029A',
-                    opacity: .8,
-                    weight: 1,
+                    opacity: 1,
+                    weight: .6,
                     fillOpacity: 0,
                   
                 });
@@ -411,12 +411,7 @@
 
                  });
                  
-                                         layer.on('click', function(e) {
-                    var clickPoint = e.layer.getLatLng();
-                    map.panTo(clickPoint)
-                    
-                });
-                  
+                 
              }
             
          }).addTo(map);
@@ -427,7 +422,7 @@
                     return L.circleMarker(layer, {
                         color: '#056F8D',
                         opacity: 1,
-                        weight: .5,
+                        weight: .6,
                         fillOpacity: 0,
         
                     });
@@ -435,25 +430,24 @@
              
                 onEachFeature(feature, layer) {
 
-                layer.on('mouseover', function() {
-
+                    layer.on('mouseover', function() {
                      var layerData = getChartData(feature);
                      updateChart(layerData);
 
-                 });
-              }
+                });
              
+                }
              
-        }).addTo(map)
-                       
-
-     
+         }).addTo(map)
+        
+    
             addUiListeners();
             updateSymbols();
-        
+    };
   
 
-    };
+    
+             
 
     function addUiListeners(){
 
@@ -487,10 +481,11 @@
             
         });
         
+        map.on('click', function(e){
+            clickPoint = L.latLng(e.latlng);
+            map.setView(clickPoint, 6)
+        });
         
-        
-      
-
     };        
 
 
