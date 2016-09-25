@@ -36,7 +36,7 @@
             top: 0;
             bottom: 0;
             width: 33%;
-            background-color: #d1d1d1;
+            background-color:rgba(90, 90, 90, 0.50);
             overflow-y: scroll;
             box-shadow:  0 0 15px rgba(0,0,0,0.2);
         }
@@ -54,7 +54,7 @@
         h2 {
             padding: 0% 0% 0% 3%;
             margin: 0% 0% 0% 0%;
-            color: #3d3d3d;
+            color: whitesmoke;
             font-weight: 500;
             font-size: 1em;
             text-align: left;
@@ -62,7 +62,7 @@
 
         #side-panel p {
             padding: 0px 15px 0 15px;
-            color: #3d3d3d;
+            color: whitesmoke;
             text-align: justify;
             font-size: .8em;
             clear: left;
@@ -71,6 +71,7 @@
             content: '';
             display: block;
         }
+        
         #map {
             position:absolute;
             top:0;
@@ -78,6 +79,7 @@
             right: 0;
             width: 67%;
         }
+
  
 /*
         #filter{
@@ -194,6 +196,8 @@
 </head>
 <body>
     
+    <div id='map'></div>
+    
 <div id='side-panel'>
     <h1>US Economies 2001 - 2013</h1>
     <h2>What makes up local economies across the country?</h2>
@@ -274,7 +278,7 @@
     
     
     
-<div id='map'></div>
+
 <!--
     <div id="filter">
             <input class="slider2" type="range" min="100" max="1000" value="100" step="1" ></div>
