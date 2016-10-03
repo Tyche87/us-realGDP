@@ -350,7 +350,7 @@
         sectorData2 = 'ENT_';
 
     var margin = {top: 20, right: 200, bottom: 35, left: 35},
-        width = 580 - margin.left - margin.right,
+        width = 620 - margin.left - margin.right,
         height = 175 - margin.top - margin.bottom;
 
 //    var bisectDate = d3.bisector(function(d) { return d.date; }).left,
@@ -369,7 +369,9 @@
 
     var xAxis = d3.svg.axis()
         .scale(x)
-        .orient("bottom");
+        .orient("bottom")
+        .ticks(13)
+        .tickFormat(d3.format(""));
         
     
 
@@ -393,6 +395,10 @@
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
       .call(xAxis)
+      .selectAll("text")
+      .attr("transform", "rotate(-30)")
+    
+    
 
 
       
