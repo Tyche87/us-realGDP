@@ -14,13 +14,15 @@
     <meta charset=utf-8 />
     <title>US Metropolitan Economies</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-    <script src='http://d3js.org/d3.v3.js'></script>
+    <!-- <script src='http{s}://d3js.org/d3.v3.js'></script> -->
+    <script src='https://d3js.org/d3.v3.js'></script>
     <script src='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.js'></script>
     <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js'></script>
     <script src='https://code.jquery.com/jquery-1.12.0.min.js'></script>
     <script src='https://npmcdn.com/simple-statistics@2.0.0/dist/simple-statistics.min.js'></script>
     
     <link href='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.css' rel='stylesheet'/>
+
     <link href="https://fonts.googleapis.com/css?family=Scope+One" rel="stylesheet"/>
     <style>
         body {
@@ -78,6 +80,9 @@
             bottom:0;
             right: 0;
             width: 67%;
+        }
+        .leaflet-popup-content {
+            max-width: 260px;   
         }
 
  
@@ -154,6 +159,19 @@
             
         }
         
+        #legend {
+            position: absolute;
+            right: 0;
+            bottom: 30px;
+            padding: 6px 15px 8px;
+            background: rgba(90, 90, 90, 0.30);
+            border: 2px solid #d3d3d3;
+            border-radius: 7px;
+            box-shadow:  0 0 15px rgba(0,0,0,0.2);
+            font-size: .8em;
+            
+        }
+
         #info p{
             padding: 3px 0px 0px 10px;
             margin: 3px 0px 1px 15px;
@@ -197,6 +215,12 @@
 <body>
     
     <div id='map'></div>
+    
+        <div id="legend">
+        <h3>Total GDP</h3>
+        <svg class="legend" width="200" height="200"></svg>
+        </div>
+        
     
 <div id='side-panel'>
     <h1>US Economies 2001 - 2013</h1>
@@ -261,6 +285,7 @@
         <svg id='chart' style="width: 100%; height:170px"></svg>
         <p>Map Authored by Tyler Hegwood 2016</p></div>
         
+        
 <!--
         <label> Choose a Metropolitan Area:</label>
         <select id = "sector-metro"> 
@@ -324,16 +349,15 @@
     ];
 
     var map = L.mapbox.map('map', 'mapbox.light', {
+        
         center: [35.82, -97.58],
         zoom: 4,
         minZoom: 3,
-        maxZoom: 9,
-        maxBounds: bounds 
-        
-
+        maxZoom: 18,
+        maxBounds: bounds,
     });
     
-
+    
     var metroCentroids = omnivore.csv('realGDP_metro_2001-2013a.csv')
         .on('ready',function(e) {
             drawMap(e.target.toGeoJSON())
@@ -352,6 +376,7 @@
     var margin = {top: 20, right: 200, bottom: 35, left: 35},
         width = 620 - margin.left - margin.right,
         height = 175 - margin.top - margin.bottom;
+    
 
 //    var bisectDate = d3.bisector(function(d) { return d.date; }).left,
 //        formatValue = d3.format(" "),
@@ -399,8 +424,6 @@
       .attr("transform", "rotate(-30)")
     
     
-
-
       
 
     svg.append("g")
@@ -437,10 +460,9 @@
                      updateChart(layerData);
 
                  });
-                 
-                 
+                                     
              }
-            
+
          }).addTo(map);
         
                 
@@ -459,7 +481,7 @@
 
                     layer.on('mouseover', function() {
                      var layerData = getChartData(feature);
-                     updateChart(layerData);
+                     updateChart(layerData);    
 
                 });
              
@@ -486,11 +508,11 @@
                 $('#year span').html(currentYear);
         });
            
-        $('.slider2')
-            .on('input change', function() {
-                gdpValue = $(this).val()
-                filter(gdpValue)
-        });
+//        $('.slider2')
+//            .on('input change', function() {
+//                gdpValue = $(this).val()
+//                filter(gdpValue)
+//        });
         
 
 
@@ -498,6 +520,7 @@
         $('select[id="sector"]').change(function(){
             sectorData = $(this).val();
             updateSymbols(sectorData);
+            
 
         });
         
@@ -529,6 +552,8 @@
             layer.setRadius(radius);
             allRadii.push(radius);
             
+            layer.bindPopup("<b>" + props.metro + ',' + props.state + "</b><br>" + currentYear + "<br>" + '$'+(realGDP*1000000).toLocaleString() + "<br>" + percent.toFixed(2) +'% of total GDP');
+            
             
             //console.log(props.metro +' '+ realGDP)
 
@@ -536,16 +561,54 @@
         
         data2.eachLayer(function(layer) {
             var props = layer.feature.properties;
-            //var percent = Number(props[sectorData + currentYear]/props['TOT_'+currentYear])*100;
+            var percent = Number(props[sectorData2 + currentYear]/props['TOT_'+currentYear])*100;
             var realGDP = Number(props[sectorData2 + currentYear]);
             var radius = calcRadius(realGDP);
             layer.setRadius(radius);
             allRadii.push(radius);
             
+            layer.bindPopup("<b>" + props.metro+','+ props.state + "</b><br>" + currentYear + "<br>" + '$'+(realGDP*1000000).toLocaleString() + "<br>" + percent.toFixed(2) +'% of total GDP');
+            
             
             //console.log(props.metro +' '+ realGDP)
 
         });
+        
+//        drawLegend(allRadii)
+//        
+//    };
+//        
+//        function drawLegend(allRadii){
+//            var legend =$('.legend')
+//            var circles = {
+//                max: ss.max(allRadii),
+//                median: ss.median(allRadii),
+//                min: ss.min(allRadii),
+//                
+//            }
+//            
+//            console.log(circles)
+//            
+//            var svgCircle = '';
+//            
+//            var reverseCalc = function(radius) {
+//                
+//                return Math.round(Math.pow(radius/.6, 2) * Math.PI)
+//                
+//            }
+//                
+//            for (var circle in circles) {
+//                var radiusValue = circles[circle];
+//                
+//                var actualValue = reverseCalc(radiusValue);
+//                
+//                svgCircle += '<circle cx="50%" cy="' + (radiusValue -180) * -1 + '" r="' + radiusValue + '" stroke = "#DEDEDE" stroke-width="2" fill="rgba(140, 2, 154, 0.30)" />';
+//                
+//                svgCircle += '<text x="'+ 85 +'" y = "'+ (radiusValue -160) * -1 + '" fill="#222222">'+ actualValue +'</text>'
+//            }
+//            
+//            legend.html(svgCircle);
+//        };
 
 //            total.eachLayer(function(layer) {
 //                radius = (calcRadius(Number(layer.feature.properties['TOT_'+currentYear])))
@@ -574,7 +637,7 @@
 
 
 
-    }
+    
 
    function calcRadius(val) {
 
